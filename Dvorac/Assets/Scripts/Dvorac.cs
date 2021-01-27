@@ -14,6 +14,7 @@ public class Dvorac : MonoBehaviour
     public GameObject dropZoneCastle;
     public GameObject dropZoneYard;
     public GameObject playerArea;
+    public GameObject cardZoomDisplay;
 
     public List<GameObject> castleDeck;
     public List<GameObject> yardDeck;
