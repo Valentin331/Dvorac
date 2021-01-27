@@ -20,14 +20,14 @@ public class CardProperties : MonoBehaviour
     private bool isOverDropZone = false;
     private GameObject dropZone;
     private Dvorac dvoracScript;
-    private GameLoop glScript;
+    private GameLoop gameLoopScript;
 
     public void Awake()
     {
         playScreen = GameObject.Find("PlayScreen");
         gameManager = GameObject.Find("GameManager");
         dvoracScript = gameManager.GetComponent<Dvorac>();
-        glScript = gameManager.GetComponent<GameLoop>();
+        gameLoopScript = gameManager.GetComponent<GameLoop>();
     }
 
     private void Update()
@@ -76,7 +76,7 @@ public class CardProperties : MonoBehaviour
         }
     }
 
-    public void zoomCard()
+    public void ZoomCard()
     {
         // If the card is zoomable, create magnified instance of it
         if (zoomable)
@@ -88,7 +88,7 @@ public class CardProperties : MonoBehaviour
         }
     }
 
-    public void destroyZoomCard()
+    public void DestroyZoomCard()
     {
         // Destroy magnified instance of this card
         Destroy(zoomInstance);
@@ -145,7 +145,7 @@ public class CardProperties : MonoBehaviour
                 // If player has no cards left, end the game
                 if (dvoracScript.playerDeck.Count == 0)
                 {
-                    glScript.doEndGame("defeat");
+                    gameLoopScript.EndGame("defeat");
                 }
             }
             else

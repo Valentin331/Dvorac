@@ -813,7 +813,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1014518977}
-        m_MethodName: doContinueGame
+        m_MethodName: ContinueGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1026,7 +1026,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1014518977}
-        m_MethodName: doExitGame
+        m_MethodName: ExitApplication
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1396,6 +1396,7 @@ GameObject:
   - component: {fileID: 1014518978}
   - component: {fileID: 1014518977}
   - component: {fileID: 1014518979}
+  - component: {fileID: 1014518981}
   - component: {fileID: 1014518980}
   m_Layer: 0
   m_Name: GameManager
@@ -1556,6 +1557,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1014518981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1014518976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84fedae41cc502048a60219ad526a02e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  botInfoPlayerDeck: []
+  botInfoCastleDeck: []
+  gameManager: {fileID: 0}
 --- !u!1 &1018641388
 GameObject:
   m_ObjectHideFlags: 0
@@ -1753,7 +1769,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1014518977}
-        m_MethodName: doPauseGame
+        m_MethodName: PauseGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2060,7 +2076,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1014518977}
-        m_MethodName: BackToMM
+        m_MethodName: BackToMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2279,7 +2295,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1014518977}
-        m_MethodName: doStartGame
+        m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2719,7 +2735,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1014518977}
-        m_MethodName: doStartGame
+        m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2963,7 +2979,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1014518977}
-        m_MethodName: doTerminateGame
+        m_MethodName: TerminateGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
