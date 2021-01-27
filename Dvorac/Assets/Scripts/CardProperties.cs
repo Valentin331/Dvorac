@@ -10,6 +10,7 @@ public class CardProperties : MonoBehaviour
     public string cardCode;
     public GameObject playScreen;
     public GameObject gameManager;
+    public GameObject cardZoomDisplay;
 
     public bool zoomable = false;
     public bool draggable = false;
@@ -20,14 +21,16 @@ public class CardProperties : MonoBehaviour
     private bool isOverDropZone = false;
     private GameObject dropZone;
     private Dvorac dvoracScript;
-    private GameLoop glScript;
+    private GameLoop gameLoopScript;
 
     public void Awake()
     {
         playScreen = GameObject.Find("PlayScreen");
         gameManager = GameObject.Find("GameManager");
+        cardZoomDisplay = GameObject.Find("CardZoomDisplay");
+        cardZoomDisplay.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
         dvoracScript = gameManager.GetComponent<Dvorac>();
-        glScript = gameManager.GetComponent<GameLoop>();
+        gameLoopScript = gameManager.GetComponent<GameLoop>();
     }
 
     private void Update()
@@ -76,22 +79,21 @@ public class CardProperties : MonoBehaviour
         }
     }
 
-    public void zoomCard()
+    public void ZoomCard()
     {
-        // If the card is zoomable, create magnified instance of it
+        // If the card is zoomable, attach the right sprite to CardZoomDisplay game object and set it to active
         if (zoomable)
         {
-            //zoomInstance = Instantiate(gameObject, new Vector2(310, 660), Quaternion.identity);
-            zoomInstance = Instantiate(gameObject, new Vector2(310, 660), Quaternion.identity);
-            zoomInstance.transform.SetParent(playScreen.transform, true);
-            zoomInstance.GetComponent<RectTransform>().sizeDelta = new Vector2(572, 800);
+            cardZoomDisplay.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
+            cardZoomDisplay.SetActive(true);
+            cardZoomDisplay.GetComponent<Image>().sprite = cardFront;
         }
     }
 
-    public void destroyZoomCard()
+    public void DestroyZoomCard()
     {
-        // Destroy magnified instance of this card
-        Destroy(zoomInstance);
+        // Set CardZoomDisplay game object to inactive
+        cardZoomDisplay.SetActive(false);
     }
 
     public void BeginDrag()
@@ -145,7 +147,7 @@ public class CardProperties : MonoBehaviour
                 // If player has no cards left, end the game
                 if (dvoracScript.playerDeck.Count == 0)
                 {
-                    glScript.doEndGame("defeat");
+                    gameLoopScript.doEndGame("defeat");
                 }
             }
             else
