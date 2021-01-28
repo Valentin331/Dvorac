@@ -22,14 +22,15 @@ public class CardProperties : MonoBehaviour
     private GameObject dropZone;
     private Dvorac dvoracScript;
     private GameLoop gameLoopScript;
+    private Bot botScript;
 
     public void Awake()
     {
         playScreen = GameObject.Find("PlayScreen");
         gameManager = GameObject.Find("GameManager");
         dvoracScript = gameManager.GetComponent<Dvorac>();
-        //dvoracScript.cardZoomDisplay.SetActive(false);
         gameLoopScript = gameManager.GetComponent<GameLoop>();
+        botScript = gameManager.GetComponent<Bot>();
     }
 
     private void Update()
@@ -96,7 +97,7 @@ public class CardProperties : MonoBehaviour
 
     public void BeginDrag()
     {
-        if(draggable)
+        if(dvoracScript.playerTurn && draggable)
         {
             startPosition = transform.position;
             transform.localScale = new Vector3(1.15f, 1.15f, 1.15f);
@@ -107,7 +108,7 @@ public class CardProperties : MonoBehaviour
 
     public void EndDrag()
     {
-        if (draggable)
+        if (dvoracScript.playerTurn && draggable)
         {
             transform.localScale = new Vector3(1, 1, 1);
             StartCoroutine(dvoracScript.playTo.GetComponent<ColorChanger>().ChangeDZColor("off"));
@@ -145,7 +146,15 @@ public class CardProperties : MonoBehaviour
                 // If player has no cards left, end the game
                 if (dvoracScript.playerDeck.Count == 0)
                 {
-                    gameLoopScript.doEndGame("defeat");
+                    gameLoopScript.EndGame("defeat");
+                    return;
+                }
+                StartCoroutine(botScript.BotTurn(3));
+                // If bot has no cards left, end the game
+                if (dvoracScript.botDeck.Count == 0)
+                {
+                    gameLoopScript.EndGame("victory");
+                    return;
                 }
             }
             else

@@ -36,6 +36,7 @@ public class Dvorac : MonoBehaviour
     public GameObject dropZoneYard;
     public GameObject playerArea;
     public GameObject cardZoomDisplay;
+    public Text gameplayMsg;
 
     public List<GameObject> castleDeck;
     public List<GameObject> yardDeck;
@@ -43,6 +44,7 @@ public class Dvorac : MonoBehaviour
     public List<GameObject> botDeck;
 
     public GameObject playTo;
+    public bool playerTurn;
 
     private void Start()
     {
@@ -83,6 +85,7 @@ public class Dvorac : MonoBehaviour
 
         // Define that next card must be played to dropZoneYard
         PlayNext("yard");
+        playerTurn = true;
     }
 
     public void ClearBoard()

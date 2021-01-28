@@ -24,7 +24,7 @@ public class GameLoop : MonoBehaviour
         dvoracScript = this.GetComponent<Dvorac>();
     }
 
-    public void doStartGame()
+    public void StartGame()
     {
         mainMenuScreen.SetActive(false);
         endGameScreen.SetActive(false);
@@ -32,22 +32,22 @@ public class GameLoop : MonoBehaviour
         dvoracScript.StartNewGame();
     }
 
-    public void doPauseGame()
+    public void PauseGame()
     {
         pauseScreen.SetActive(true);
     }
 
-    public void doContinueGame()
+    public void ContinueGame()
     {
         pauseScreen.SetActive(false);
     }
 
-    public void doEndGame(string state)
+    public void EndGame(string state)
     {
         endGameScreen.SetActive(true);
         if (state == "victory")
         {
-            // TODO: write victory code here
+            endGameMsg.text = "Dobio si,";
         }
         else if (state == "defeat")
         {
@@ -58,7 +58,7 @@ public class GameLoop : MonoBehaviour
         dvoracScript.dropZoneYard.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
     }
 
-    public void doTerminateGame()
+    public void TerminateGame()
     {
         dvoracScript.ClearBoard();
         dvoracScript.dropZoneCastle.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
@@ -67,12 +67,12 @@ public class GameLoop : MonoBehaviour
         mainMenuScreen.SetActive(true);
     }
 
-    public void doExitGame()
+    public void ExitApplication()
     {
         Application.Quit();
     }
 
-    public void BackToMM()
+    public void BackToMainMenu()
     {
         mainMenuScreen.SetActive(true);
         endGameScreen.SetActive(false);
