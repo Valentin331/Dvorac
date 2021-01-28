@@ -1521,11 +1521,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 445df369a9203ca46aa149899e01059a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levijatan: {fileID: 9172690308409492985, guid: b25d98290e7f7b34990f96977a269d76,
-    type: 3}
   goruciCovjek: {fileID: 9172690308409492985, guid: fa7ec947bbe7b854b9884c978f691fd1,
     type: 3}
+  objeseniCovjek: {fileID: 9172690308409492985, guid: 8813c7db52ca8ca4cadf0605e7a6b0c7,
+    type: 3}
+  zlatnaKula: {fileID: 9172690308409492985, guid: 9110efcdac8f99f439150efde5a7c42c,
+    type: 3}
   srebrnaKula: {fileID: 9172690308409492985, guid: edaa996fab8389a429c080d66a115229,
+    type: 3}
+  vitez: {fileID: 9172690308409492985, guid: 0db587d03162aeb4faad0f9adf3bf3dd, type: 3}
+  dvorskaLuda: {fileID: 9172690308409492985, guid: 3a51fef3d6499fd458a4daff4d91286c,
+    type: 3}
+  svetac: {fileID: 9172690308409492985, guid: 12c3f5d4dd6fec14e8dab860957dc90b, type: 3}
+  carobnjak: {fileID: 9172690308409492985, guid: bed24d14e1cf21b4fb0a341432b1aae4,
+    type: 3}
+  kraljica: {fileID: 9172690308409492985, guid: 30226195faee0d34a8225455b6f1c668,
+    type: 3}
+  vjestica: {fileID: 9172690308409492985, guid: 49b57148c6045c741a53b741f46f921d,
+    type: 3}
+  kralj: {fileID: 9172690308409492985, guid: 8e858c5169e79834b8649e1b269556f3, type: 3}
+  vrag: {fileID: 9172690308409492985, guid: e2836e562614fe3479915aa7e0a41175, type: 3}
+  vodoriga: {fileID: 9172690308409492985, guid: 9ba8097124bbe1b43afefa25612b3a8a,
+    type: 3}
+  patuljak: {fileID: 9172690308409492985, guid: 0a4c3f73a3340e240b7b6735fa68f685,
+    type: 3}
+  koloSrece: {fileID: 9172690308409492985, guid: 506df9dd4e589fa4f865e92b7512e90f,
+    type: 3}
+  lovac: {fileID: 9172690308409492985, guid: f42302cab54e3934d92611bf77ec479c, type: 3}
+  div: {fileID: 9172690308409492985, guid: de50466622d37f341914eb48444cbfcb, type: 3}
+  kocija: {fileID: 9172690308409492985, guid: 6acee85989b72cc4cb0c337c957e834f, type: 3}
+  nocnaMora: {fileID: 9172690308409492985, guid: 5a96c87b3bb175a4cbeff073a2a987fb,
+    type: 3}
+  glasnik: {fileID: 9172690308409492985, guid: d98b40150c171ce4aa6a061247802145, type: 3}
+  osuda: {fileID: 9172690308409492985, guid: eac729a007de6874ca8002d08f7a70a1, type: 3}
+  jednorog: {fileID: 9172690308409492985, guid: 762e9e9d8949b1a42844d9381dd8f7fe,
+    type: 3}
+  behemot: {fileID: 9172690308409492985, guid: c89a74b3b2ba1bc4bad522814d2e81f8, type: 3}
+  levijatan: {fileID: 9172690308409492985, guid: b25d98290e7f7b34990f96977a269d76,
     type: 3}
   dropZoneCastle: {fileID: 1018641388}
   dropZoneYard: {fileID: 2074832803}
@@ -1972,7 +2004,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 1
   m_CellSize: {x: 143, y: 200}
-  m_Spacing: {x: 12, y: 0}
+  m_Spacing: {x: -80, y: 0}
   m_Constraint: 2
   m_ConstraintCount: 1
 --- !u!1 &1541839389
