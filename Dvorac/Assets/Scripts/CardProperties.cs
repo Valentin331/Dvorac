@@ -27,9 +27,8 @@ public class CardProperties : MonoBehaviour
     {
         playScreen = GameObject.Find("PlayScreen");
         gameManager = GameObject.Find("GameManager");
-        cardZoomDisplay = GameObject.Find("CardZoomDisplay");
-        cardZoomDisplay.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
         dvoracScript = gameManager.GetComponent<Dvorac>();
+        //dvoracScript.cardZoomDisplay.SetActive(false);
         gameLoopScript = gameManager.GetComponent<GameLoop>();
     }
 
@@ -84,16 +83,15 @@ public class CardProperties : MonoBehaviour
         // If the card is zoomable, attach the right sprite to CardZoomDisplay game object and set it to active
         if (zoomable)
         {
-            cardZoomDisplay.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
-            cardZoomDisplay.SetActive(true);
-            cardZoomDisplay.GetComponent<Image>().sprite = cardFront;
+            dvoracScript.cardZoomDisplay.SetActive(true);
+            dvoracScript.cardZoomDisplay.GetComponent<Image>().sprite = cardFront;
         }
     }
 
     public void DestroyZoomCard()
     {
         // Set CardZoomDisplay game object to inactive
-        cardZoomDisplay.SetActive(false);
+        dvoracScript.cardZoomDisplay.SetActive(false);
     }
 
     public void BeginDrag()

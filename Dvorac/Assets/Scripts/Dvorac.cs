@@ -7,9 +7,30 @@ using System.Linq;
 public class Dvorac : MonoBehaviour
 {
     // TODO: create all 24 card prefabs in the editor and add them here as game objects
-    public GameObject levijatan;
     public GameObject goruciCovjek;
+    public GameObject objeseniCovjek;
+    public GameObject zlatnaKula;
     public GameObject srebrnaKula;
+    public GameObject vitez;
+    public GameObject dvorskaLuda;
+    public GameObject svetac;
+    public GameObject carobnjak;
+    public GameObject kraljica;
+    public GameObject vjestica;
+    public GameObject kralj;
+    public GameObject vrag;
+    public GameObject vodoriga;
+    public GameObject patuljak;
+    public GameObject koloSrece;
+    public GameObject lovac;
+    public GameObject div;
+    public GameObject kocija;
+    public GameObject nocnaMora;
+    public GameObject glasnik;
+    public GameObject osuda;
+    public GameObject jednorog;
+    public GameObject behemot;
+    public GameObject levijatan;
 
     public GameObject dropZoneCastle;
     public GameObject dropZoneYard;
@@ -23,13 +44,18 @@ public class Dvorac : MonoBehaviour
 
     public GameObject playTo;
 
+    private void Start()
+    {
+        cardZoomDisplay.SetActive(false);
+    }
+
     public void StartNewGame()
     {
         castleDeck = GenerateDeck();
         Shuffle(castleDeck);
 
         // Deal cards to players
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 12; i++)
         {
             playerDeck.Add(castleDeck.Last<GameObject>());
             castleDeck.RemoveAt(castleDeck.Count - 1);
@@ -87,23 +113,39 @@ public class Dvorac : MonoBehaviour
 
         for (int i = 0; i < 16; i++)
         {
-            // TODO: add all lvl 1 rarity cards to newDeck
             newDeck.Add(goruciCovjek);
+            newDeck.Add(objeseniCovjek);
+            newDeck.Add(vodoriga);
         }
         for (int i = 0; i < 8; i++)
         {
-            // TODO: add all lvl 2 rarity cards to newDeck
             newDeck.Add(srebrnaKula);
+            newDeck.Add(zlatnaKula);
+            newDeck.Add(patuljak);
         }
         for (int i = 0; i < 4; i++)
         {
-            // TODO: add all lvl 3 rarity cards to newDeck
+            newDeck.Add(vitez);
+            newDeck.Add(dvorskaLuda);
+            newDeck.Add(koloSrece);
+            newDeck.Add(lovac);
         }
         for (int i = 0; i < 2; i++)
         {
-            // TODO: add all lvl 4 rarity cards to newDeck
+            newDeck.Add(svetac);
+            newDeck.Add(carobnjak);
+            newDeck.Add(div);
+            newDeck.Add(kocija);
+            newDeck.Add(nocnaMora);
+            newDeck.Add(glasnik);
         }
-        // TODO: add all lvl 5 rarity cards to newDeck
+        newDeck.Add(kraljica);
+        newDeck.Add(vjestica);
+        newDeck.Add(kralj);
+        newDeck.Add(vrag);
+        newDeck.Add(osuda);
+        newDeck.Add(jednorog);
+        newDeck.Add(behemot);
         newDeck.Add(levijatan);
 
         return newDeck;
