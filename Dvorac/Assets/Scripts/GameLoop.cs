@@ -29,7 +29,8 @@ public class GameLoop : MonoBehaviour
         mainMenuScreen.SetActive(false);
         endGameScreen.SetActive(false);
         pauseScreen.SetActive(false);
-        dvoracScript.StartNewGame();
+        //dvoracScript.StartNewGame();
+        StartCoroutine(dvoracScript.StartNewGame());
     }
 
     public void PauseGame()

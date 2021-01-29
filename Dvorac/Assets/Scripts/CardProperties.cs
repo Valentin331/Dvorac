@@ -129,6 +129,12 @@ public class CardProperties : MonoBehaviour
                         if (dvoracScript.playTo.name == "DropZoneYard")
                         {
                             dvoracScript.yardDeck.Add(dvoracScript.playerDeck[cardIndex]);
+
+                            // If played card is goruciCovjek: fetch card.
+                            if (cardCode == "goruciCovjek")
+                            {
+                                dvoracScript.FetchCard("player");
+                            }
                         }
                         else
                         {
@@ -149,7 +155,7 @@ public class CardProperties : MonoBehaviour
                     gameLoopScript.EndGame("defeat");
                     return;
                 }
-                StartCoroutine(botScript.BotTurn(3));
+                StartCoroutine(botScript.BotTurn(2.6f, 0.4f));
                 // If bot has no cards left, end the game
                 if (dvoracScript.botDeck.Count == 0)
                 {
