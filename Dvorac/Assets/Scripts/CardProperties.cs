@@ -10,6 +10,7 @@ public class CardProperties : MonoBehaviour
     public string cardCode;
     public GameObject playScreen;
     public GameObject gameManager;
+    public GameObject cardZoomDisplay;
 
     public bool zoomable = false;
     public bool draggable = false;
@@ -21,6 +22,7 @@ public class CardProperties : MonoBehaviour
     private GameObject dropZone;
     private Dvorac dvoracScript;
     private GameLoop gameLoopScript;
+    private Bot botScript;
 
     public void Awake()
     {
@@ -28,6 +30,7 @@ public class CardProperties : MonoBehaviour
         gameManager = GameObject.Find("GameManager");
         dvoracScript = gameManager.GetComponent<Dvorac>();
         gameLoopScript = gameManager.GetComponent<GameLoop>();
+        botScript = gameManager.GetComponent<Bot>();
     }
 
     private void Update()
@@ -78,25 +81,23 @@ public class CardProperties : MonoBehaviour
 
     public void ZoomCard()
     {
-        // If the card is zoomable, create magnified instance of it
+        // If the card is zoomable, attach the right sprite to CardZoomDisplay game object and set it to active
         if (zoomable)
         {
-            //zoomInstance = Instantiate(gameObject, new Vector2(310, 660), Quaternion.identity);
-            zoomInstance = Instantiate(gameObject, new Vector2(310, 660), Quaternion.identity);
-            zoomInstance.transform.SetParent(playScreen.transform, true);
-            zoomInstance.GetComponent<RectTransform>().sizeDelta = new Vector2(572, 800);
+            dvoracScript.cardZoomDisplay.SetActive(true);
+            dvoracScript.cardZoomDisplay.GetComponent<Image>().sprite = cardFront;
         }
     }
 
     public void DestroyZoomCard()
     {
-        // Destroy magnified instance of this card
-        Destroy(zoomInstance);
+        // Set CardZoomDisplay game object to inactive
+        dvoracScript.cardZoomDisplay.SetActive(false);
     }
 
     public void BeginDrag()
     {
-        if(draggable)
+        if(dvoracScript.playerTurn && draggable)
         {
             startPosition = transform.position;
             transform.localScale = new Vector3(1.15f, 1.15f, 1.15f);
@@ -107,7 +108,7 @@ public class CardProperties : MonoBehaviour
 
     public void EndDrag()
     {
-        if (draggable)
+        if (dvoracScript.playerTurn && draggable)
         {
             transform.localScale = new Vector3(1, 1, 1);
             StartCoroutine(dvoracScript.playTo.GetComponent<ColorChanger>().ChangeDZColor("off"));
@@ -128,6 +129,12 @@ public class CardProperties : MonoBehaviour
                         if (dvoracScript.playTo.name == "DropZoneYard")
                         {
                             dvoracScript.yardDeck.Add(dvoracScript.playerDeck[cardIndex]);
+
+                            // If played card is goruciCovjek: fetch card.
+                            if (cardCode == "goruciCovjek")
+                            {
+                                dvoracScript.FetchCard("player");
+                            }
                         }
                         else
                         {
@@ -146,6 +153,14 @@ public class CardProperties : MonoBehaviour
                 if (dvoracScript.playerDeck.Count == 0)
                 {
                     gameLoopScript.EndGame("defeat");
+                    return;
+                }
+                StartCoroutine(botScript.BotTurn(2.6f, 0.4f));
+                // If bot has no cards left, end the game
+                if (dvoracScript.botDeck.Count == 0)
+                {
+                    gameLoopScript.EndGame("victory");
+                    return;
                 }
             }
             else

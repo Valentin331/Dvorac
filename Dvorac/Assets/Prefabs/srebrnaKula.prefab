@@ -93,9 +93,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardFront: {fileID: 21300000, guid: f84985e8d0db1ab47ae3d364b72f4aa7, type: 3}
   cardBack: {fileID: 21300000, guid: efffaa9f949980f47a4f067edbbc7236, type: 3}
-  cardCode: sk
+  cardCode: srebrnaKula
   playScreen: {fileID: 0}
   gameManager: {fileID: 0}
+  cardZoomDisplay: {fileID: 0}
   zoomable: 1
   draggable: 1
 --- !u!114 &-8065708588093336498
@@ -116,7 +117,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 7282126717859893199}
-          m_MethodName: zoomCard
+          m_MethodName: ZoomCard
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -131,7 +132,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 7282126717859893199}
-          m_MethodName: destroyZoomCard
+          m_MethodName: DestroyZoomCard
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -157,7 +158,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
         - m_Target: {fileID: 7282126717859893199}
-          m_MethodName: destroyZoomCard
+          m_MethodName: DestroyZoomCard
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -239,7 +240,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 91d6ee23e45524544a9ae7e2096c7d00, type: 3}
+  m_audioClip: {fileID: 8300000, guid: ca4a5a841a48ea44c9f59604151a4895, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
