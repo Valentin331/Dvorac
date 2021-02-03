@@ -97,7 +97,7 @@ public class CardProperties : MonoBehaviour
 
     public void BeginDrag()
     {
-        if(dvoracScript.playerTurn && draggable)
+        if(draggable)
         {
             startPosition = transform.position;
             transform.localScale = new Vector3(1.15f, 1.15f, 1.15f);
@@ -108,13 +108,13 @@ public class CardProperties : MonoBehaviour
 
     public void EndDrag()
     {
-        if (dvoracScript.playerTurn && draggable)
+        if (draggable)
         {
             transform.localScale = new Vector3(1, 1, 1);
             StartCoroutine(dvoracScript.playTo.GetComponent<ColorChanger>().ChangeDZColor("off"));
             isBeingDragged = false;
             // If the card is dropped over valid drop zone than...
-            if (isOverDropZone)
+            if (isOverDropZone && dvoracScript.playerTurn)
             {
                 // ...set it's parent to be that drop zone.
                 transform.SetParent(dropZone.transform, false);
