@@ -14,12 +14,14 @@ public class Bot : MonoBehaviour
     private GameLoop gameLoopScript;
     private CardMoveAnimator cardMoveAnimatorScript;
     private Dictionary<string, int> scoreDictionary;
+    private CardMoveAnimator cardMoveAnimatorScript;
 
     private void Awake()
     {
         dvoracScript = GetComponent<Dvorac>();
         cardMoveAnimatorScript = GetComponent<CardMoveAnimator>();
         gameLoopScript = GetComponent<GameLoop>();
+
         botMessages.Add("Bot razmišlja koju će kartu baciti...");
         botMessages.Add("Bot smišlja neku opaku taktiku..");
         botMessages.Add("Sad je bot na redu...");
@@ -133,6 +135,8 @@ public class Bot : MonoBehaviour
 
         // Select card which will be played.
         
+        // Select card which will be played.
+        int cardIndex = Random.Range(0, dvoracScript.botDeck.Count);
         GameObject selectedCard = dvoracScript.botDeck[cardIndex];
 
         yield return new WaitForSeconds(wait);

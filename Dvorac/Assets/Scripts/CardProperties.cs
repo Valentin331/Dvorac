@@ -97,7 +97,7 @@ public class CardProperties : MonoBehaviour
 
     public void BeginDrag()
     {
-        if(draggable)
+        if(dvoracScript.playerTurn && draggable)
         {
             startPosition = transform.position;
             transform.localScale = new Vector3(1.15f, 1.15f, 1.15f);
@@ -108,7 +108,7 @@ public class CardProperties : MonoBehaviour
 
     public void EndDrag()
     {
-        if (draggable)
+        if (dvoracScript.playerTurn && draggable)
         {
             transform.localScale = new Vector3(1, 1, 1);
             StartCoroutine(dvoracScript.playTo.GetComponent<ColorChanger>().ChangeDZColor("off"));
