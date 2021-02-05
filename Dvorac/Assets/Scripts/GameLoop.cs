@@ -8,7 +8,9 @@ public class GameLoop : MonoBehaviour
     public GameObject endGameScreen;
     public GameObject mainMenuScreen;
     public GameObject pauseScreen;
+    public GameObject difficultySelectScreen;
     public Text endGameMsg;
+    public int botDifficulty;
 
     private Dvorac dvoracScript;
 
@@ -17,6 +19,7 @@ public class GameLoop : MonoBehaviour
     {
         endGameScreen.SetActive(false);
         pauseScreen.SetActive(false);
+        difficultySelectScreen.SetActive(false);
     }
 
     private void Awake()
@@ -29,8 +32,26 @@ public class GameLoop : MonoBehaviour
         mainMenuScreen.SetActive(false);
         endGameScreen.SetActive(false);
         pauseScreen.SetActive(false);
+
+        difficultySelectScreen.SetActive(false);
+
         //dvoracScript.StartNewGame();
         StartCoroutine(dvoracScript.StartNewGame());
+    }
+
+    public void EasyDifficulty()
+    {
+        botDifficulty = 1;
+    }
+
+    public void MediumDifficulty()
+    {
+        botDifficulty = 2;
+    }
+
+    public void HardDifficulty()
+    {
+        botDifficulty = 3;
     }
 
     public void PauseGame()
@@ -77,5 +98,10 @@ public class GameLoop : MonoBehaviour
     {
         mainMenuScreen.SetActive(true);
         endGameScreen.SetActive(false);
+    }
+
+    public void DifficultySelect()
+    {
+        difficultySelectScreen.SetActive(true);
     }
 }

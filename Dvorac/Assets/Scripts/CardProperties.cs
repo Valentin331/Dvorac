@@ -114,7 +114,7 @@ public class CardProperties : MonoBehaviour
             StartCoroutine(dvoracScript.playTo.GetComponent<ColorChanger>().ChangeDZColor("off"));
             isBeingDragged = false;
             // If the card is dropped over valid drop zone than...
-            if (isOverDropZone)
+            if (isOverDropZone && dvoracScript.playerTurn)
             {
                 // ...set it's parent to be that drop zone.
                 transform.SetParent(dropZone.transform, false);
