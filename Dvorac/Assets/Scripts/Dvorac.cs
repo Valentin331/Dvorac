@@ -69,8 +69,7 @@ public class Dvorac : MonoBehaviour
         castleCardInstance.transform.SetParent(dropZoneCastle.transform, false);
 
         // Deal cards to players
-
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 6; i++)
         {
             GameObject playerCardInstance = Instantiate(castleDeck.Last<GameObject>(), dropZoneCastle.transform.position, Quaternion.identity);
             playerCardInstance.transform.SetParent(playScreen.transform, true);
