@@ -23,17 +23,21 @@ public class Bot : MonoBehaviour
         botMessages.Add("Bot razmišlja koju će kartu baciti...");
         botMessages.Add("Bot smišlja neku opaku taktiku..");
         botMessages.Add("Sad je bot na redu...");
+        scoreDictionary = new Dictionary<string, int>();
     }
 
     public IEnumerator BotTurn(float wait, float animationDuration)
     {
+        scoreDictionary = new Dictionary<string, int>();
+
         // Disable player input and display bot turn message.
         dvoracScript.playerTurn = false;
         dvoracScript.gameplayMsg.text = botMessages[Random.Range(0, botMessages.Count)];
 
         //Selecting next cart the bot will play based on chosen difficulty
         int cardIndex;
-        GameObject objectOfMaxValue;
+        int cardCounter;
+
         if (gameLoopScript.botDifficulty == 1)
         {
             //najgora karta (suprotno od hard)
@@ -46,91 +50,118 @@ public class Bot : MonoBehaviour
         }
         else
         {
+            Debug.Log("POCETAK TURNA -- POCETAK TURNA -- POCETAK TURNA");
+
+            //temp botdeck print
+            foreach (GameObject karta in dvoracScript.botDeck)
+            {
+                Debug.Log(karta);
+            }
+
             foreach (GameObject card in dvoracScript.botDeck)
             {
-                Debug.Log(card);
-                switch (card.name)
+                if (scoreDictionary.ContainsKey(card.name)) {}
+                else
                 {
-                    case "goruciCovjek":
-                        //scoreDictionary.Add(card.name, 150);
-                        break;
-                    case "objeseniCovjek":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "zlatnaKula":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "srebrnaKula":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "vitez":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "dvorskaLuda":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "svetac":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "carobnjak":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "kraljica":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "vjestica":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "kralj":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "vrag":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "vodoriga":
-                        scoreDictionary.Add(card.name, 150);
-                        break;
-                    case "patuljak":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "koloSrece":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "lovac":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "div":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "kocija":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "nocnaMora":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "glasnik":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "osuda":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "jednorog":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "behemot":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
-                    case "levijatan":
-                        scoreDictionary.Add(card.name, 100);
-                        break;
+                    switch (card.name)
+                    {
+                        case "goruciCovjek":
+                            scoreDictionary.Add(card.name, 150);
+                            break;
+                        case "objeseniCovjek":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "zlatnaKula":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "srebrnaKula":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "vitez":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "dvorskaLuda":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "svetac":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "carobnjak":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "kraljica":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "vjestica":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "kralj":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "vrag":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "vodoriga":
+                            scoreDictionary.Add(card.name, 150);
+                            break;
+                        case "patuljak":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "koloSrece":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "lovac":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "div":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "kocija":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "nocnaMora":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "glasnik":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "osuda":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "jednorog":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "behemot":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                        case "levijatan":
+                            scoreDictionary.Add(card.name, 100);
+                            break;
+                    }
                 }
-
             }
-            var keyOfMaxValue = scoreDictionary.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-            objectOfMaxValue = GameObject.Find(keyOfMaxValue);
-            cardIndex = dvoracScript.botDeck.IndexOf(objectOfMaxValue);
-        }
 
+            //temp score print
+            foreach (KeyValuePair<string, int> kvp in scoreDictionary)
+            {
+                Debug.Log("karta: " + kvp.Key + "  score: " + kvp.Value);
+            }
+
+            //Getting chosen card index based on max score
+            var keyOfMaxValue = scoreDictionary.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+            cardCounter = 0;
+            cardIndex = -1;
+            foreach (GameObject card in dvoracScript.botDeck)
+            {
+                if (card.GetComponent<CardProperties>().cardCode == keyOfMaxValue)
+                {
+                    cardIndex = cardCounter;
+                    break;
+                }
+                cardCounter += 1;
+            }
+        }
+        Debug.Log("karta je: " + dvoracScript.botDeck[cardIndex]);
         // Select card which will be played.
         
         GameObject selectedCard = dvoracScript.botDeck[cardIndex];

@@ -69,7 +69,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: dfff3bbbaaf382a4ab39923a02e5b770, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -97,8 +97,8 @@ MonoBehaviour:
   playScreen: {fileID: 0}
   gameManager: {fileID: 0}
   cardZoomDisplay: {fileID: 0}
-  zoomable: 1
-  draggable: 1
+  zoomable: 0
+  draggable: 0
 --- !u!114 &-8288136258480144585
 MonoBehaviour:
   m_ObjectHideFlags: 0
