@@ -38,6 +38,7 @@ public class Dvorac : MonoBehaviour
     public GameObject botArea;
     public GameObject cardZoomDisplay;
     public Text gameplayMsg;
+    public Text botCardCount;
 
     public List<GameObject> castleDeck;
     public List<GameObject> yardDeck;
@@ -62,10 +63,10 @@ public class Dvorac : MonoBehaviour
         Shuffle(castleDeck);
         PlayNext("yard");
 
-        //castleDeck[0].GetComponent<CardProperties>().FlipCardOn("back");
-        castleDeck[0].GetComponent<CardProperties>().zoomable = false;
-        castleDeck[0].GetComponent<CardProperties>().draggable = false;
         GameObject castleCardInstance = Instantiate(castleDeck[0], new Vector2(0, 0), Quaternion.identity);
+        castleCardInstance.GetComponent<CardProperties>().zoomable = false;
+        castleCardInstance.GetComponent<CardProperties>().zoomable = false;
+        castleCardInstance.GetComponent<CardProperties>().FlipCardOn("back");
         castleCardInstance.transform.SetParent(dropZoneCastle.transform, false);
 
         // Deal cards to players
@@ -93,6 +94,7 @@ public class Dvorac : MonoBehaviour
             Destroy(botCardInstance);
             botDeck.Add(castleDeck.Last<GameObject>());
             castleDeck.RemoveAt(castleDeck.Count - 1);
+            botCardCount.text = botDeck.Count().ToString();
         }
 
         playerTurn = true;
@@ -201,10 +203,10 @@ public class Dvorac : MonoBehaviour
             castleDeck.RemoveAt(castleDeck.Count - 1);
 
             GameObject card = playerDeck.Last<GameObject>();
-            card.GetComponent<CardProperties>().FlipCardOn("front");
-            card.GetComponent<CardProperties>().zoomable = true;
-            card.GetComponent<CardProperties>().draggable = true;
             GameObject cardInstance = Instantiate(card, new Vector2(0, 0), Quaternion.identity);
+            cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
+            cardInstance.GetComponent<CardProperties>().zoomable = true;
+            cardInstance.GetComponent<CardProperties>().draggable = true;
             cardInstance.transform.SetParent(playerArea.transform, false);
         }
         else if (who == "bot")
