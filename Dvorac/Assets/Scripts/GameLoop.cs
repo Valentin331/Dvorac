@@ -21,13 +21,13 @@ public class GameLoop : MonoBehaviour
         endGameScreen.SetActive(false);
         pauseScreen.SetActive(false);
         difficultySelectScreen.SetActive(false);
+        audioManagerScript.PlaySound("mainOST");
     }
 
     private void Awake()
     {
         dvoracScript = GetComponent<Dvorac>();
         audioManagerScript = GameObject.Find("AudioManager").GetComponent<AudioManager>();
-        audioManagerScript.PlaySound("mainOST");
     }
 
     public void StartGame()
