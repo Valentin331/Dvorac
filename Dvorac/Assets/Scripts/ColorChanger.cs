@@ -17,7 +17,7 @@ public class ColorChanger : MonoBehaviour
             {
                 timeElapsed += Time.deltaTime;
                 t = timeElapsed / duration;
-                GetComponent<Image>().color = Color.Lerp(new Color32(255, 255, 255, 0), new Color32(255, 255, 255, 35), t);
+                GetComponent<Image>().color = Color.Lerp(new Color32(255, 245, 155, 0), new Color32(255, 245, 155, 65), t);
                 yield return null;
             }
         }
@@ -27,7 +27,7 @@ public class ColorChanger : MonoBehaviour
             {
                 timeElapsed += Time.deltaTime;
                 t = timeElapsed / duration;
-                GetComponent<Image>().color = Color.Lerp(new Color32(255, 255, 255, 35), new Color32(255, 255, 255, 0), t);
+                GetComponent<Image>().color = Color.Lerp(new Color32(255, 245, 155, 65), new Color32(255, 245, 155, 0), t);
                 yield return null;
             }
         }
