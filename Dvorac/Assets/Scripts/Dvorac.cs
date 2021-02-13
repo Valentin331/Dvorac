@@ -62,22 +62,22 @@ public class Dvorac : MonoBehaviour
         Shuffle(castleDeck);
         PlayNext("yard");
 
-        castleDeck[0].GetComponent<CardProperties>().FlipCardOn("back");
+        //castleDeck[0].GetComponent<CardProperties>().FlipCardOn("back");
         castleDeck[0].GetComponent<CardProperties>().zoomable = false;
         castleDeck[0].GetComponent<CardProperties>().draggable = false;
         GameObject castleCardInstance = Instantiate(castleDeck[0], new Vector2(0, 0), Quaternion.identity);
         castleCardInstance.transform.SetParent(dropZoneCastle.transform, false);
 
         // Deal cards to players
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 3; i++)
         {
             GameObject playerCardInstance = Instantiate(castleDeck.Last<GameObject>(), dropZoneCastle.transform.position, Quaternion.identity);
             playerCardInstance.transform.SetParent(playScreen.transform, true);
             playerCardInstance.transform.localScale = new Vector3(1, 1, 1);
-            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(playerCardInstance, dropZoneCastle.transform.position, playerArea.transform.position, 0.1f));
-            yield return new WaitForSeconds(0.1f);
-            playerCardInstance.transform.SetParent(playerArea.transform, false);
             playerCardInstance.GetComponent<CardProperties>().FlipCardOn("front");
+            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(playerCardInstance, dropZoneCastle.transform.position, playerArea.transform.position, 0.5f));
+            yield return new WaitForSeconds(0.5f);
+            playerCardInstance.transform.SetParent(playerArea.transform, false);
             playerCardInstance.GetComponent<CardProperties>().zoomable = true;
             playerCardInstance.GetComponent<CardProperties>().draggable = true;
             playerDeck.Add(castleDeck.Last<GameObject>());
@@ -86,8 +86,9 @@ public class Dvorac : MonoBehaviour
             GameObject botCardInstance = Instantiate(castleDeck.Last<GameObject>(), dropZoneCastle.transform.position, Quaternion.identity);
             botCardInstance.transform.SetParent(playScreen.transform, true);
             botCardInstance.transform.localScale = new Vector3(1, 1, 1);
-            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(botCardInstance, dropZoneCastle.transform.position, botArea.transform.position, 0.1f));
-            yield return new WaitForSeconds(0.1f);
+            botCardInstance.GetComponent<CardProperties>().FlipCardOn("back");
+            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(botCardInstance, dropZoneCastle.transform.position, botArea.transform.position, 0.5f));
+            yield return new WaitForSeconds(0.5f);
             botCardInstance.transform.SetParent(botArea.transform, false);
             Destroy(botCardInstance);
             botDeck.Add(castleDeck.Last<GameObject>());
