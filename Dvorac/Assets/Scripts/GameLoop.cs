@@ -13,6 +13,7 @@ public class GameLoop : MonoBehaviour
     public int botDifficulty;
 
     private Dvorac dvoracScript;
+    private AudioManager audioManagerScript;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +25,9 @@ public class GameLoop : MonoBehaviour
 
     private void Awake()
     {
-        dvoracScript = this.GetComponent<Dvorac>();
+        dvoracScript = GetComponent<Dvorac>();
+        audioManagerScript = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        audioManagerScript.PlaySound("mainOST");
     }
 
     public void StartGame()
@@ -33,23 +36,28 @@ public class GameLoop : MonoBehaviour
         endGameScreen.SetActive(false);
         pauseScreen.SetActive(false);
         difficultySelectScreen.SetActive(false);
-        //dvoracScript.StartNewGame();
         StartCoroutine(dvoracScript.StartNewGame());
     }
 
     public void EasyDifficulty()
     {
         botDifficulty = 1;
+        audioManagerScript.StopSound("mainOST");
+        audioManagerScript.PlaySound("gameAmbient");
     }
 
     public void MediumDifficulty()
     {
         botDifficulty = 2;
+        audioManagerScript.StopSound("mainOST");
+        audioManagerScript.PlaySound("gameAmbient");
     }
 
     public void HardDifficulty()
     {
         botDifficulty = 3;
+        audioManagerScript.StopSound("mainOST");
+        audioManagerScript.PlaySound("gameAmbient");
     }
 
     public void PauseGame()
@@ -65,9 +73,12 @@ public class GameLoop : MonoBehaviour
     public void EndGame(string state)
     {
         endGameScreen.SetActive(true);
+        audioManagerScript.StopSound("gameAmbient");
+
         if (state == "victory")
         {
             endGameMsg.text = "Dobio si,";
+            audioManagerScript.PlaySound("victoryScreen");
         }
         else if (state == "defeat")
         {
@@ -80,6 +91,8 @@ public class GameLoop : MonoBehaviour
 
     public void TerminateGame()
     {
+        audioManagerScript.StopSound("gameAmbient");
+        audioManagerScript.PlaySound("mainOST");
         dvoracScript.ClearBoard();
         dvoracScript.dropZoneCastle.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
         dvoracScript.dropZoneYard.GetComponent<Image>().color = new Color32(255, 255, 255, 0);
@@ -94,12 +107,18 @@ public class GameLoop : MonoBehaviour
 
     public void BackToMainMenu()
     {
+        audioManagerScript.StopSound("victoryScreen");
+        audioManagerScript.PlaySound("mainOST");
         mainMenuScreen.SetActive(true);
         endGameScreen.SetActive(false);
     }
 
     public void DifficultySelect()
     {
+        audioManagerScript.StopSound("victoryScreen");
+        audioManagerScript.PlaySound("mainOST");
         difficultySelectScreen.SetActive(true);
+        endGameScreen.SetActive(false);
+        mainMenuScreen.SetActive(false);
     }
 }

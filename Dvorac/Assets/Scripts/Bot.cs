@@ -12,12 +12,14 @@ public class Bot : MonoBehaviour
     public List<string> botMessages;
     private Dvorac dvoracScript;
     private GameLoop gameLoopScript;
+    private CardFunctions cardFunctionsScript;
     private CardMoveAnimator cardMoveAnimatorScript;
     private Dictionary<string, int> scoreDictionary;
 
     private void Awake()
     {
         dvoracScript = GetComponent<Dvorac>();
+        cardFunctionsScript = GetComponent<CardFunctions>();
         cardMoveAnimatorScript = GetComponent<CardMoveAnimator>();
         gameLoopScript = GetComponent<GameLoop>();
         botMessages.Add("Bot razmišlja koju će kartu baciti...");
@@ -169,11 +171,11 @@ public class Bot : MonoBehaviour
         yield return new WaitForSeconds(wait);
 
         // Instantiate a card and start it's animation.
-        CardProperties cardPropertiesScript = selectedCard.GetComponent<CardProperties>();
-        cardPropertiesScript.FlipCardOn("back");
-        cardPropertiesScript.zoomable = false;
-        cardPropertiesScript.draggable = false;
+        //CardProperties cardPropertiesScript = selectedCard.GetComponent<CardProperties>();
         GameObject cardInstance = Instantiate(selectedCard, botArea.transform.position, Quaternion.identity);
+        cardInstance.GetComponent<CardProperties>().FlipCardOn("back");
+        cardInstance.GetComponent<CardProperties>().zoomable = false;
+        cardInstance.GetComponent<CardProperties>().draggable = false;
         cardInstance.transform.SetParent(playScreen.transform, true);
         cardInstance.transform.localScale = new Vector3(1, 1, 1);
 
@@ -194,6 +196,17 @@ public class Bot : MonoBehaviour
 
         dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
         dvoracScript.botDeck.RemoveAt(cardIndex);
+
+        // Call the correct function in regard of what card was played
+        cardFunctionsScript.botCardFunctionalities[dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 1].GetComponent<CardProperties>().name].Invoke();
+
+        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
+
+        // If bot has no cards left, end the game
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+        }
 
         // Clear gameplay message and enable player input.
         dvoracScript.gameplayMsg.text = "";

@@ -23,6 +23,7 @@ public class CardProperties : MonoBehaviour
     private Dvorac dvoracScript;
     private GameLoop gameLoopScript;
     private Bot botScript;
+    private CardFunctions cardFunctionsScript;
 
     public void Awake()
     {
@@ -31,6 +32,7 @@ public class CardProperties : MonoBehaviour
         dvoracScript = gameManager.GetComponent<Dvorac>();
         gameLoopScript = gameManager.GetComponent<GameLoop>();
         botScript = gameManager.GetComponent<Bot>();
+        cardFunctionsScript = gameManager.GetComponent<CardFunctions>();
     }
 
     private void Update()
@@ -59,11 +61,6 @@ public class CardProperties : MonoBehaviour
             isOverDropZone = false;
             dropZone = null;
         }
-    }
-
-    public void PlaySound()
-    {
-        GetComponent<AudioSource>().Play();
     }
 
     public void FlipCardOn(string side)
@@ -129,12 +126,9 @@ public class CardProperties : MonoBehaviour
                         if (dvoracScript.playTo.name == "DropZoneYard")
                         {
                             dvoracScript.yardDeck.Add(dvoracScript.playerDeck[cardIndex]);
-
-                            // If played card is goruciCovjek: fetch card.
-                            if (cardCode == "goruciCovjek")
-                            {
-                                dvoracScript.FetchCard("player");
-                            }
+                            
+                            // Call the correct function in regard of what card was played
+                            cardFunctionsScript.playerCardFunctionalities[cardCode].Invoke();
                         }
                         else
                         {
@@ -144,7 +138,6 @@ public class CardProperties : MonoBehaviour
                         }
                         dvoracScript.playerDeck.RemoveAt(cardIndex);
                         draggable = false;
-                        PlaySound();
                         break;
                     }
                     cardIndex++;
@@ -156,12 +149,6 @@ public class CardProperties : MonoBehaviour
                     return;
                 }
                 StartCoroutine(botScript.BotTurn(2.6f, 0.4f));
-                // If bot has no cards left, end the game
-                if (dvoracScript.botDeck.Count == 0)
-                {
-                    gameLoopScript.EndGame("victory");
-                    return;
-                }
             }
             else
             {
