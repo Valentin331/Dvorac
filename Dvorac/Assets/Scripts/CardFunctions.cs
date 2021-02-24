@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Reflection;
+using Asyncoroutine;
 using UnityEngine;
 
 public class CardFunctions : MonoBehaviour
@@ -9,6 +10,9 @@ public class CardFunctions : MonoBehaviour
     public GameObject audioManager;
 
     private AudioManager audioManagerScript;
+    private GameLoop gameLoopScript;
+    private Bot botScript;
+    private Dvorac dvoracScript;
 
     public Dictionary<string, Action> playerCardFunctionalities = new Dictionary<string, Action>();
     public Dictionary<string, Action> botCardFunctionalities = new Dictionary<string, Action>();
@@ -17,6 +21,9 @@ public class CardFunctions : MonoBehaviour
     {
         audioManager = GameObject.Find("AudioManager");
         audioManagerScript = audioManager.GetComponent<AudioManager>();
+        dvoracScript = GetComponent<Dvorac>();
+        gameLoopScript = GetComponent<GameLoop>();
+        botScript = GetComponent<Bot>();
     }
 
     private void Start()
@@ -72,11 +79,45 @@ public class CardFunctions : MonoBehaviour
         botCardFunctionalities.Add("levijatan", LevijatanBot);
     }
 
-    public void GoruciCovjekPlayer()
+    private void EndOfTurn(string who)
+    {
+        if(who == "player")
+        {
+            // If player has no cards left; end game
+            if (dvoracScript.playerDeck.Count == 0)
+            {
+                gameLoopScript.EndGame("defeat");
+                return;
+            }
+            // Disable player input
+            dvoracScript.playerTurn = false;
+            // Start bot's turn
+            StartCoroutine(botScript.BotTurn(2.6f, 0.4f));
+        }
+        else
+        {
+            // If bot has no cards left; end game
+            if (dvoracScript.botDeck.Count == 0)
+            {
+                gameLoopScript.EndGame("victory");
+                return;
+            }
+            // Enable player input
+            dvoracScript.playerTurn = true;
+        }
+    }
+
+    public async void GoruciCovjekPlayer()
     {
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("goruciCovjek");
+
+        dvoracScript.FetchCard("player");
+        // Wait for the duration of FetchCard function
+        await new WaitForSeconds(.2f);
+
+        EndOfTurn("player");
     }
 
     public void ObjeseniCovjekPlayer()
@@ -84,6 +125,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("objeseniCovjek");
+
+        EndOfTurn("player");
     }
 
     public void ZlatnaKulaPlayer()
@@ -91,6 +134,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("zlatnaKula");
+
+        EndOfTurn("player");
     }
 
     public void SrebrnaKulaPlayer()
@@ -98,6 +143,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("srebrnaKula");
+
+        EndOfTurn("player");
     }
 
     public void VitezPlayer()
@@ -105,6 +152,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("vitez");
+
+        EndOfTurn("player");
     }
 
     public void DvorskaLudaPlayer()
@@ -112,6 +161,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("dvorskaLuda");
+
+        EndOfTurn("player");
     }
 
     public void SvetacPlayer()
@@ -119,6 +170,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("svetac");
+
+        EndOfTurn("player");
     }
 
     public void CarobnjakPlayer()
@@ -126,6 +179,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("carobnjak");
+
+        EndOfTurn("player");
     }
 
     public void KraljicaPlayer()
@@ -133,6 +188,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("kraljica");
+
+        EndOfTurn("player");
     }
 
     public void VjesticaPlayer()
@@ -140,6 +197,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("vjestica");
+
+        EndOfTurn("player");
     }
 
     public void KraljPlayer()
@@ -147,6 +206,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("kralj");
+
+        EndOfTurn("player");
     }
 
     public void VragPlayer()
@@ -154,6 +215,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("vrag");
+
+        EndOfTurn("player");
     }
 
     public void VodorigaPlayer()
@@ -161,6 +224,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("vodoriga");
+
+        EndOfTurn("player");
     }
 
     public void PatuljakPlayer()
@@ -168,6 +233,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("patuljak");
+
+        EndOfTurn("player");
     }
 
     public void KoloSrecePlayer()
@@ -175,6 +242,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("koloSrece");
+
+        EndOfTurn("player");
     }
 
     public void LovacPlayer()
@@ -182,6 +251,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("lovac");
+
+        EndOfTurn("player");
     }
 
     public void DivPlayer()
@@ -189,6 +260,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("div");
+
+        EndOfTurn("player");
     }
 
     public void KocijaPlayer()
@@ -196,6 +269,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("kocija");
+
+        EndOfTurn("player");
     }
 
     public void NocnaMoraPlayer()
@@ -203,6 +278,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("nocnaMora");
+
+        EndOfTurn("player");
     }
 
     public void GlasnikPlayer()
@@ -210,6 +287,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("glasnik");
+
+        EndOfTurn("player");
     }
 
     public void OsudaPlayer()
@@ -217,6 +296,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("osuda");
+
+        EndOfTurn("player");
     }
 
     public void JednorogPlayer()
@@ -224,6 +305,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("jednorog");
+
+        EndOfTurn("player");
     }
 
     public void BehemotPlayer()
@@ -231,6 +314,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("behemot");
+
+        EndOfTurn("player");
     }
 
     public void LevijatanPlayer()
@@ -238,13 +323,21 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("levijatan");
+
+        EndOfTurn("player");
     }
 
-    public void GoruciCovjekBot()
+    public async void GoruciCovjekBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("goruciCovjek");
+
+        dvoracScript.FetchCard("bot");
+        // Wait for the duration of FetchCard function
+        await new WaitForSeconds(.2f);
+
+        EndOfTurn("bot");
     }
 
     public void ObjeseniCovjekBot()
@@ -252,6 +345,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("objeseniCovjek");
+
+        EndOfTurn("bot");
     }
 
     public void ZlatnaKulaBot()
@@ -259,6 +354,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("zlatnaKula");
+
+        EndOfTurn("bot");
     }
 
     public void SrebrnaKulaBot()
@@ -266,6 +363,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("srebrnaKula");
+
+        EndOfTurn("bot");
     }
 
     public void VitezBot()
@@ -273,6 +372,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("vitez");
+
+        EndOfTurn("bot");
     }
 
     public void DvorskaLudaBot()
@@ -280,6 +381,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("dvorskaLuda");
+
+        EndOfTurn("bot");
     }
 
     public void SvetacBot()
@@ -287,6 +390,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("svetac");
+
+        EndOfTurn("bot");
     }
 
     public void CarobnjakBot()
@@ -294,6 +399,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("carobnjak");
+
+        EndOfTurn("bot");
     }
 
     public void KraljicaBot()
@@ -301,6 +408,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("kraljica");
+
+        EndOfTurn("bot");
     }
 
     public void VjesticaBot()
@@ -308,6 +417,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("vjestica");
+
+        EndOfTurn("bot");
     }
 
     public void KraljBot()
@@ -315,6 +426,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("kralj");
+
+        EndOfTurn("bot");
     }
 
     public void VragBot()
@@ -322,6 +435,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("vrag");
+
+        EndOfTurn("bot");
     }
 
     public void VodorigaBot()
@@ -329,6 +444,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("vodoriga");
+
+        EndOfTurn("bot");
     }
 
     public void PatuljakBot()
@@ -336,6 +453,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("patuljak");
+
+        EndOfTurn("bot");
     }
 
     public void KoloSreceBot()
@@ -343,6 +462,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("koloSrece");
+
+        EndOfTurn("bot");
     }
 
     public void LovacBot()
@@ -350,6 +471,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("lovac");
+
+        EndOfTurn("bot");
     }
 
     public void DivBot()
@@ -357,6 +480,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("div");
+
+        EndOfTurn("bot");
     }
 
     public void KocijaBot()
@@ -364,6 +489,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("kocija");
+
+        EndOfTurn("bot");
     }
 
     public void NocnaMoraBot()
@@ -371,6 +498,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("nocnaMora");
+
+        EndOfTurn("bot");
     }
 
     public void GlasnikBot()
@@ -378,6 +507,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("glasnik");
+
+        EndOfTurn("bot");
     }
 
     public void OsudaBot()
@@ -385,6 +516,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("osuda");
+
+        EndOfTurn("bot");
     }
 
     public void JednorogBot()
@@ -392,6 +525,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("jednorog");
+
+        EndOfTurn("bot");
     }
 
     public void BehemotBot()
@@ -399,6 +534,8 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("behemot");
+
+        EndOfTurn("bot");
     }
 
     public void LevijatanBot()
@@ -406,5 +543,7 @@ public class CardFunctions : MonoBehaviour
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("levijatan");
+
+        EndOfTurn("bot");
     }
 }
