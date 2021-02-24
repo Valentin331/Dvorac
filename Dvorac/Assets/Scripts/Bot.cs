@@ -190,12 +190,44 @@ public class Bot : MonoBehaviour
         dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
         dvoracScript.botDeck.RemoveAt(cardIndex);
 
-        // Call the correct function in regard of what card was played
-        cardFunctionsScript.botCardFunctionalities[dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 1].GetComponent<CardProperties>().name].Invoke();
-
         dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
 
         // Clear gameplay message.
         dvoracScript.gameplayMsg.text = "";
+
+        // Call the correct function in regard of what card was played
+        cardFunctionsScript.botCardFunctionalities[dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 1].GetComponent<CardProperties>().name].Invoke();
+    }
+
+    public IEnumerator BotDiscard(float wait, float animationDuration)
+    {
+        dvoracScript.gameplayMsg.text = "Bot gleda koju bi kartu odbacio...";
+        // TODO:
+        // Write algorithm for selecting card to discard.
+        int cardIndex = Random.Range(0, dvoracScript.botDeck.Count);
+        GameObject selectedCard = dvoracScript.botDeck[cardIndex];
+
+        yield return new WaitForSeconds(wait);
+
+        dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
+        dvoracScript.botDeck.RemoveAt(cardIndex);
+
+        GameObject cardInstance = Instantiate(selectedCard, botArea.transform.position, Quaternion.identity);
+        cardInstance.GetComponent<CardProperties>().FlipCardOn("back");
+        cardInstance.GetComponent<CardProperties>().zoomable = false;
+        cardInstance.GetComponent<CardProperties>().draggable = false;
+        cardInstance.transform.SetParent(playScreen.transform, true);
+        cardInstance.transform.localScale = new Vector3(1, 1, 1);
+
+        StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneYard.transform.position, animationDuration));
+        dvoracScript.gameplayMsg.text = "";
+
+        yield return new WaitForSeconds(animationDuration);
+
+        cardInstance.transform.SetParent(dvoracScript.dropZoneYard.transform, true);
+        cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
+        cardInstance.GetComponent<CardProperties>().zoomable = true;
+
+        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
     }
 }
