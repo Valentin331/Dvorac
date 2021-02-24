@@ -109,8 +109,6 @@ public class CardFunctions : MonoBehaviour
 
     public async void GoruciCovjekPlayer()
     {
-        // TODO:
-        // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("goruciCovjek");
 
         dvoracScript.FetchCard("player");
@@ -126,14 +124,31 @@ public class CardFunctions : MonoBehaviour
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("objeseniCovjek");
 
-        EndOfTurn("player");
+        // If player has no cards left; end game
+        if (dvoracScript.playerDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("defeat");
+            return;
+        }
+
+        dvoracScript.gameplayMsg.text = "Odbaci kartu.";
+        // Define that the next played card will be discarded
+        dvoracScript.playAction = "discardOC";
     }
 
-    public void ZlatnaKulaPlayer()
+    public async void ZlatnaKulaPlayer()
     {
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("zlatnaKula");
+
+        for (int i = 0; i < 2; i++)
+        {
+            dvoracScript.FetchCard("player");
+            await new WaitForSeconds(.2f);
+            dvoracScript.FetchCard("bot");
+            await new WaitForSeconds(.2f);
+        }
 
         EndOfTurn("player");
     }
@@ -144,7 +159,16 @@ public class CardFunctions : MonoBehaviour
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("srebrnaKula");
 
-        EndOfTurn("player");
+        // If player has no cards left; end game
+        if (dvoracScript.playerDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("defeat");
+            return;
+        }
+
+        dvoracScript.gameplayMsg.text = "Odbaci kartu.";
+
+        dvoracScript.playAction = "discardSKP1";
     }
 
     public void VitezPlayer()
@@ -329,8 +353,6 @@ public class CardFunctions : MonoBehaviour
 
     public async void GoruciCovjekBot()
     {
-        // TODO:
-        // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("goruciCovjek");
 
         dvoracScript.FetchCard("bot");
@@ -340,31 +362,67 @@ public class CardFunctions : MonoBehaviour
         EndOfTurn("bot");
     }
 
-    public void ObjeseniCovjekBot()
+    public async void ObjeseniCovjekBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("objeseniCovjek");
 
+        // If bot has no cards left; end game
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
+
+        StartCoroutine(botScript.BotDiscard(1.1f, .4f));
+
+        await new WaitForSeconds(1.5f);
+
         EndOfTurn("bot");
     }
 
-    public void ZlatnaKulaBot()
+    public async void ZlatnaKulaBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("zlatnaKula");
 
+        for (int i = 0; i < 2; i++)
+        {
+            dvoracScript.FetchCard("bot");
+            await new WaitForSeconds(.2f);
+            dvoracScript.FetchCard("player");
+            await new WaitForSeconds(.2f);
+        }
+
         EndOfTurn("bot");
     }
 
-    public void SrebrnaKulaBot()
+    public async void SrebrnaKulaBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("srebrnaKula");
 
-        EndOfTurn("bot");
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
+
+        StartCoroutine(botScript.BotDiscard(1.1f, .4f));
+        await new WaitForSeconds(1.5f);
+
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
+
+        dvoracScript.playerTurn = true;
+        dvoracScript.gameplayMsg.text = "Odbaci kartu.";
+        dvoracScript.playAction = "discardSKB1";
     }
 
     public void VitezBot()

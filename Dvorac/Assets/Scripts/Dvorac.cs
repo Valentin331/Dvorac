@@ -48,6 +48,7 @@ public class Dvorac : MonoBehaviour
 
     public GameObject playTo;
     public bool playerTurn;
+    public string playAction;
 
     private CardMoveAnimator cardMoveAnimatorScript;
 
@@ -98,6 +99,7 @@ public class Dvorac : MonoBehaviour
             botCardCount.text = botDeck.Count().ToString();
         }
 
+        playAction = "play";
         playerTurn = true;
     }
 
@@ -195,43 +197,6 @@ public class Dvorac : MonoBehaviour
         }
     }
 
-    //public IEnumerator FetchCard(string who)
-    //{
-    //    float duration = .5f;
-    //    if (who == "player")
-    //    {
-    //        // Add last item from castleDeck list to playerDeck list.
-    //        playerDeck.Add(castleDeck.Last<GameObject>());
-    //        castleDeck.RemoveAt(castleDeck.Count - 1);
-
-    //        // Select last card from player deck, instantiate it and play fetching animation
-    //        GameObject card = playerDeck.Last<GameObject>();
-    //        GameObject cardInstance = Instantiate(card, new Vector2(0, 0), Quaternion.identity);
-    //        cardInstance.transform.SetParent(playScreen.transform, true);
-    //        cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
-    //        cardInstance.GetComponent<CardProperties>().zoomable = false;
-    //        cardInstance.GetComponent<CardProperties>().draggable = false;
-    //        cardInstance.transform.localScale = new Vector3(1, 1, 1);
-    //        StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, dropZoneCastle.transform.position, playerArea.transform.position, duration));
-
-    //        yield return new WaitForSeconds(duration);
-
-    //        // Set card's parent to be playerArea and make it zoomable and draggable
-    //        cardInstance.transform.SetParent(playerArea.transform, false);
-    //        cardInstance.GetComponent<CardProperties>().zoomable = true;
-    //        cardInstance.GetComponent<CardProperties>().draggable = true;
-    //    }
-    //    else if (who == "bot")
-    //    {
-    //        // Add last item from castleDeck list to botDeck list.
-    //        botDeck.Add(castleDeck.Last<GameObject>());
-    //        castleDeck.RemoveAt(castleDeck.Count - 1);
-
-    //        //GameObject card = botDeck.Last<GameObject>();
-    //        //GameObject cardInstance = Instantiate(card, )
-    //    }
-    //}
-
     public async void FetchCard(string who)
     {
         float duration = .2f;
@@ -274,6 +239,8 @@ public class Dvorac : MonoBehaviour
             StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, dropZoneCastle.transform.position, botArea.transform.position, duration));
 
             await new WaitForSeconds(duration);
+
+            botCardCount.text = botDeck.Count.ToString();
 
             Destroy(cardInstance);
         }

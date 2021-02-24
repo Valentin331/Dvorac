@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Asyncoroutine;
 
 public class CardProperties : MonoBehaviour
 {
@@ -129,8 +130,103 @@ public class CardProperties : MonoBehaviour
 
                             // Remove card from playerDeck list
                             dvoracScript.playerDeck.RemoveAt(cardIndex);
-                            // Call the correct function in regard of what card was played
-                            cardFunctionsScript.playerCardFunctionalities[cardCode].Invoke();
+                            
+                            // Determine under which condition card was played and act accordingly
+                            if (dvoracScript.playAction == "play")
+                            {
+                                cardFunctionsScript.playerCardFunctionalities[cardCode].Invoke();
+                            }
+                            else if (dvoracScript.playAction == "discardOC")
+                            {
+                                // If player has no cards left; end game
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+                                dvoracScript.playAction = "play";
+                                // Disable player input
+                                dvoracScript.playerTurn = false;
+                                // Start bot's turn
+                                StartCoroutine(botScript.BotTurn(2.6f, 0.4f));
+                            }
+                            else if (dvoracScript.playAction == "discardSKP1")
+                            {
+                                // If player has no cards left; end game
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+                                dvoracScript.playAction = "discardSKP2";
+                                // Disable player input
+                                dvoracScript.playerTurn = false;
+                                StartCoroutine(botScript.BotDiscard(1.1f, 0.4f));
+                                await new WaitForSeconds(1.5f);
+                                // If bot has no cards left; end game
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
+                                    return;
+                                }
+                                dvoracScript.gameplayMsg.text = "Odbaci kartu.";
+                                dvoracScript.playerTurn = true;
+                            }
+                            else if (dvoracScript.playAction == "discardSKP2")
+                            {
+                                // If player has no cards left; end game
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+                                dvoracScript.playAction = "play";
+                                dvoracScript.playerTurn = false;
+                                StartCoroutine(botScript.BotDiscard(1.1f, 0.4f));
+                                await new WaitForSeconds(1.5f);
+                                // If player has no cards left; end game
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
+                                    return;
+                                }
+                                StartCoroutine(botScript.BotTurn(2.6f, .4f));
+                            }
+                            else if (dvoracScript.playAction == "discardSKB1")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                dvoracScript.playerTurn = false;
+
+                                StartCoroutine(botScript.BotDiscard(1.1f, .4f));
+                                await new WaitForSeconds(1.5f);
+
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
+                                    return;
+                                }
+
+                                dvoracScript.gameplayMsg.text = "Odbaci kartu.";
+                                dvoracScript.playAction = "discardSKB2";
+                                dvoracScript.playerTurn = true;
+                            }
+                            else if (dvoracScript.playAction == "discardSKB2")
+                            {
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
+                                    return;
+                                }
+
+                                dvoracScript.playAction = "play";
+                                dvoracScript.gameplayMsg.text = "";
+                                dvoracScript.playerTurn = true;
+                            }
                         }
                         else
                         {
