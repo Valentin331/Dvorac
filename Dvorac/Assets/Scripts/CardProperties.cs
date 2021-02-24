@@ -103,7 +103,7 @@ public class CardProperties : MonoBehaviour
         }
     }
 
-    public void EndDrag()
+    public async void EndDrag()
     {
         if (draggable)
         {
@@ -126,29 +126,25 @@ public class CardProperties : MonoBehaviour
                         if (dvoracScript.playTo.name == "DropZoneYard")
                         {
                             dvoracScript.yardDeck.Add(dvoracScript.playerDeck[cardIndex]);
-                            
+
+                            // Remove card from playerDeck list
+                            dvoracScript.playerDeck.RemoveAt(cardIndex);
                             // Call the correct function in regard of what card was played
                             cardFunctionsScript.playerCardFunctionalities[cardCode].Invoke();
                         }
                         else
                         {
                             dvoracScript.castleDeck.Add(dvoracScript.playerDeck[cardIndex]);
+                            dvoracScript.playerDeck.RemoveAt(cardIndex);
                             zoomable = false;
                             FlipCardOn("back");
                         }
-                        dvoracScript.playerDeck.RemoveAt(cardIndex);
+                        //dvoracScript.playerDeck.RemoveAt(cardIndex);
                         draggable = false;
                         break;
                     }
                     cardIndex++;
                 }
-                // If player has no cards left, end the game
-                if (dvoracScript.playerDeck.Count == 0)
-                {
-                    gameLoopScript.EndGame("defeat");
-                    return;
-                }
-                StartCoroutine(botScript.BotTurn(2.6f, 0.4f));
             }
             else
             {

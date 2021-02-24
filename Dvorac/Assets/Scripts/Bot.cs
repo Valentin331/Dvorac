@@ -32,8 +32,7 @@ public class Bot : MonoBehaviour
     {
         scoreDictionary = new Dictionary<string, int>();
 
-        // Disable player input and display bot turn message.
-        dvoracScript.playerTurn = false;
+        // Display bot turn message.
         dvoracScript.gameplayMsg.text = botMessages[Random.Range(0, botMessages.Count)];
 
         //Selecting next cart the bot will play based on chosen difficulty
@@ -183,12 +182,6 @@ public class Bot : MonoBehaviour
 
         yield return new WaitForSeconds(animationDuration);
 
-        // If played card is goruciCovjek: fetch card.
-        if (selectedCard.GetComponent<CardProperties>().cardCode == "goruciCovjek")
-        {
-            dvoracScript.FetchCard("bot");
-        }
-
         // Actually move the card to correct list and set it's parent.
         cardInstance.transform.SetParent(dvoracScript.dropZoneYard.transform, true);
         cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
@@ -202,14 +195,7 @@ public class Bot : MonoBehaviour
 
         dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
 
-        // If bot has no cards left, end the game
-        if (dvoracScript.botDeck.Count == 0)
-        {
-            gameLoopScript.EndGame("victory");
-        }
-
-        // Clear gameplay message and enable player input.
+        // Clear gameplay message.
         dvoracScript.gameplayMsg.text = "";
-        dvoracScript.playerTurn = true;
     }
 }
