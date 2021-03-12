@@ -93,6 +93,8 @@ MonoBehaviour:
   cardFront: {fileID: 21300000, guid: d28ba783954621548b372d779b01f8ca, type: 3}
   cardBack: {fileID: 21300000, guid: efffaa9f949980f47a4f067edbbc7236, type: 3}
   cardCode: vodoriga
+  cardSymbol: z
+  cardRarity: 1
   playScreen: {fileID: 0}
   gameManager: {fileID: 0}
   cardZoomDisplay: {fileID: 0}

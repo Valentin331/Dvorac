@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using System.Reflection;
 using Asyncoroutine;
 using UnityEngine;
@@ -166,18 +167,44 @@ public class CardFunctions : MonoBehaviour
             return;
         }
 
-        dvoracScript.gameplayMsg.text = "Odbaci kartu.";
-
+        dvoracScript.PlayNext("castle");
+        dvoracScript.gameplayMsg.text = "Krovaj kartu.";
         dvoracScript.playAction = "discardSKP1";
     }
 
-    public void VitezPlayer()
+    public async void VitezPlayer()
     {
         // TODO:
-        // Write code that will be executed when player plays this card
+        // Set revealed cards to bot memory depending on difficulty level
         audioManagerScript.PlaySound("vitez");
 
-        EndOfTurn("player");
+        for (int i = 0; i < 2; i++)
+        {
+            dvoracScript.FetchCard("player");
+            // Wait for the duration of FetchCard function
+            await new WaitForSeconds(.2f);
+            if (i == 0)
+            {
+                dvoracScript.RevealCard(dvoracScript.playerDeck.Last<GameObject>(), dvoracScript.cardReveal1);
+            }
+            else
+            {
+                dvoracScript.RevealCard(dvoracScript.playerDeck.Last<GameObject>(), dvoracScript.cardReveal2);
+            }
+        }
+        if (dvoracScript.playerDeck[dvoracScript.playerDeck.Count - 1].GetComponent<CardProperties>().cardSymbol != dvoracScript.playerDeck[dvoracScript.playerDeck.Count - 2].GetComponent<CardProperties>().cardSymbol)
+        {
+            dvoracScript.gameplayMsg.text = "Bot preskače svoj potez.";
+        }
+        await new WaitForSeconds(1.6f);
+
+        dvoracScript.CancelRevealCard();
+        dvoracScript.gameplayMsg.text = "";
+
+        if (dvoracScript.playerDeck[dvoracScript.playerDeck.Count - 1].GetComponent<CardProperties>().cardSymbol == dvoracScript.playerDeck[dvoracScript.playerDeck.Count - 2].GetComponent<CardProperties>().cardSymbol)
+        {
+            EndOfTurn("player");
+        }
     }
 
     public void DvorskaLudaPlayer()
@@ -186,7 +213,16 @@ public class CardFunctions : MonoBehaviour
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("dvorskaLuda");
 
-        EndOfTurn("player");
+        // If player has no cards left; end game
+        if (dvoracScript.playerDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("defeat");
+            return;
+        }
+
+        dvoracScript.gameplayMsg.text = "Odbaci kartu.";
+        // Define that the next played card will be discarded
+        dvoracScript.playAction = "discardDLP1";
     }
 
     public void SvetacPlayer()
@@ -375,7 +411,7 @@ public class CardFunctions : MonoBehaviour
             return;
         }
 
-        StartCoroutine(botScript.BotDiscard(1.1f, .4f));
+        StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
 
         await new WaitForSeconds(1.5f);
 
@@ -411,7 +447,9 @@ public class CardFunctions : MonoBehaviour
             return;
         }
 
-        StartCoroutine(botScript.BotDiscard(1.1f, .4f));
+        dvoracScript.PlayNext("castle");
+
+        StartCoroutine(botScript.BotDiscard(1.1f, .4f, "castle"));
         await new WaitForSeconds(1.5f);
 
         if (dvoracScript.botDeck.Count == 0)
@@ -421,26 +459,87 @@ public class CardFunctions : MonoBehaviour
         }
 
         dvoracScript.playerTurn = true;
-        dvoracScript.gameplayMsg.text = "Odbaci kartu.";
+        dvoracScript.gameplayMsg.text = "Krovaj kartu.";
         dvoracScript.playAction = "discardSKB1";
     }
 
-    public void VitezBot()
+    public async void VitezBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("vitez");
 
-        EndOfTurn("bot");
+        for (int i = 0; i < 2; i++)
+        {
+            dvoracScript.FetchCard("bot");
+            // Wait for the duration of FetchCard function
+            await new WaitForSeconds(.2f);
+            if (i == 0)
+            {
+                dvoracScript.RevealCard(dvoracScript.botDeck.Last<GameObject>(), dvoracScript.cardReveal1);
+            }
+            else
+            {
+                dvoracScript.RevealCard(dvoracScript.botDeck.Last<GameObject>(), dvoracScript.cardReveal2);
+            }
+        }
+        if (dvoracScript.playerDeck[dvoracScript.playerDeck.Count - 1].GetComponent<CardProperties>().cardSymbol != dvoracScript.playerDeck[dvoracScript.playerDeck.Count - 2].GetComponent<CardProperties>().cardSymbol)
+        {
+            dvoracScript.gameplayMsg.text = "Preskačeš svoj potez.";
+        }
+        await new WaitForSeconds(1.6f);
+
+        dvoracScript.CancelRevealCard();
+        dvoracScript.gameplayMsg.text = "";
+
+        if (dvoracScript.playerDeck[dvoracScript.playerDeck.Count - 1].GetComponent<CardProperties>().cardSymbol == dvoracScript.playerDeck[dvoracScript.playerDeck.Count - 2].GetComponent<CardProperties>().cardSymbol)
+        {
+            EndOfTurn("bot");
+        }
+        else
+        {
+            StartCoroutine(botScript.BotTurn(2.6f, 0.4f));
+        }
     }
 
-    public void DvorskaLudaBot()
+    public async void DvorskaLudaBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("dvorskaLuda");
 
-        EndOfTurn("bot");
+        // If bot has no cards left; end game
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
+
+        StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
+        await new WaitForSeconds(1.5f);
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
+        StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
+        await new WaitForSeconds(1.5f);
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
+
+        if (dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 1].GetComponent<CardProperties>().cardRarity == dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 2].GetComponent<CardProperties>().cardRarity)
+        {
+            dvoracScript.playAction = "discardDLB";
+            dvoracScript.playerTurn = true;
+            dvoracScript.gameplayMsg.text = "Odbaci kartu.";
+        }
+        else
+        {
+            EndOfTurn("bot");
+        }
     }
 
     public void SvetacBot()

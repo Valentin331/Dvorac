@@ -8,6 +8,7 @@ public class Bot : MonoBehaviour
     public GameObject playScreen;
     public GameObject botArea;
     public GameObject dropZoneYard;
+    public GameObject dropZoneCastle;
 
     public List<string> botMessages;
     private Dvorac dvoracScript;
@@ -199,17 +200,31 @@ public class Bot : MonoBehaviour
         cardFunctionsScript.botCardFunctionalities[dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 1].GetComponent<CardProperties>().name].Invoke();
     }
 
-    public IEnumerator BotDiscard(float wait, float animationDuration)
+    public IEnumerator BotDiscard(float wait, float animationDuration, string deck)
     {
-        dvoracScript.gameplayMsg.text = "Bot gleda koju bi kartu odbacio...";
+        if (deck == "yard")
+        {
+            dvoracScript.gameplayMsg.text = "Bot gleda koju bi kartu odbacio...";
+        }
+        else if (deck == "castle")
+        {
+            dvoracScript.gameplayMsg.text = "Bot gleda koju bi kartu krovao...";
+        }
         // TODO:
-        // Write algorithm for selecting card to discard.
+        // Write algorithm for selecting card to roof discard.
         int cardIndex = Random.Range(0, dvoracScript.botDeck.Count);
         GameObject selectedCard = dvoracScript.botDeck[cardIndex];
 
         yield return new WaitForSeconds(wait);
 
-        dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
+        if (deck == "yard")
+        {
+            dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
+        }
+        else if (deck == "castle")
+        {
+            dvoracScript.castleDeck.Add(dvoracScript.botDeck[cardIndex]);
+        }
         dvoracScript.botDeck.RemoveAt(cardIndex);
 
         GameObject cardInstance = Instantiate(selectedCard, botArea.transform.position, Quaternion.identity);
@@ -219,14 +234,28 @@ public class Bot : MonoBehaviour
         cardInstance.transform.SetParent(playScreen.transform, true);
         cardInstance.transform.localScale = new Vector3(1, 1, 1);
 
-        StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneYard.transform.position, animationDuration));
+        if (deck == "yard")
+        {
+            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneYard.transform.position, animationDuration));
+        }
+        else if (deck == "castle")
+        {
+            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneCastle.transform.position, animationDuration));
+        }
         dvoracScript.gameplayMsg.text = "";
 
         yield return new WaitForSeconds(animationDuration);
 
-        cardInstance.transform.SetParent(dvoracScript.dropZoneYard.transform, true);
-        cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
-        cardInstance.GetComponent<CardProperties>().zoomable = true;
+        if (deck == "yard")
+        {
+            cardInstance.transform.SetParent(dvoracScript.dropZoneYard.transform, true);
+            cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
+            cardInstance.GetComponent<CardProperties>().zoomable = true;
+        }
+        else if (deck == "castle")
+        {
+            cardInstance.transform.SetParent(dvoracScript.dropZoneCastle.transform, true);
+        }
 
         dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
     }

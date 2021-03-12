@@ -93,6 +93,8 @@ MonoBehaviour:
   cardFront: {fileID: 21300000, guid: 32512a489d932d141ba589dbdb9c913f, type: 3}
   cardBack: {fileID: 21300000, guid: efffaa9f949980f47a4f067edbbc7236, type: 3}
   cardCode: patuljak
+  cardSymbol: z
+  cardRarity: 2
   playScreen: {fileID: 0}
   gameManager: {fileID: 0}
   cardZoomDisplay: {fileID: 0}
