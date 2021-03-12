@@ -9,6 +9,8 @@ public class CardProperties : MonoBehaviour
     public Sprite cardFront;
     public Sprite cardBack;
     public string cardCode;
+    public string cardSymbol;
+    public string cardRarity;
     public GameObject playScreen;
     public GameObject gameManager;
     public GameObject cardZoomDisplay;
@@ -125,7 +127,7 @@ public class CardProperties : MonoBehaviour
                     if (cardCode == card.GetComponent<CardProperties>().cardCode)
                     {
                         if (dvoracScript.playTo.name == "DropZoneYard")
-                        {
+                        { // Cards are being played
                             dvoracScript.yardDeck.Add(dvoracScript.playerDeck[cardIndex]);
 
                             // Remove card from playerDeck list
@@ -161,7 +163,7 @@ public class CardProperties : MonoBehaviour
                                 dvoracScript.playAction = "discardSKP2";
                                 // Disable player input
                                 dvoracScript.playerTurn = false;
-                                StartCoroutine(botScript.BotDiscard(1.1f, 0.4f));
+                                StartCoroutine(botScript.BotDiscard(1.1f, 0.4f, "castle"));
                                 await new WaitForSeconds(1.5f);
                                 // If bot has no cards left; end game
                                 if (dvoracScript.botDeck.Count == 0)
@@ -182,7 +184,7 @@ public class CardProperties : MonoBehaviour
                                 }
                                 dvoracScript.playAction = "play";
                                 dvoracScript.playerTurn = false;
-                                StartCoroutine(botScript.BotDiscard(1.1f, 0.4f));
+                                StartCoroutine(botScript.BotDiscard(1.1f, 0.4f, "castle"));
                                 await new WaitForSeconds(1.5f);
                                 // If player has no cards left; end game
                                 if (dvoracScript.botDeck.Count == 0)
@@ -202,7 +204,7 @@ public class CardProperties : MonoBehaviour
 
                                 dvoracScript.playerTurn = false;
 
-                                StartCoroutine(botScript.BotDiscard(1.1f, .4f));
+                                StartCoroutine(botScript.BotDiscard(1.1f, .4f, "castle"));
                                 await new WaitForSeconds(1.5f);
 
                                 if (dvoracScript.botDeck.Count == 0)
@@ -227,15 +229,155 @@ public class CardProperties : MonoBehaviour
                                 dvoracScript.gameplayMsg.text = "";
                                 dvoracScript.playerTurn = true;
                             }
+                            else if (dvoracScript.playAction == "discardDLP1")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+                                dvoracScript.playAction = "discardDLP2";
+                                dvoracScript.gameplayMsg.text = "Odbaci drugu kartu";
+                            }
+                            else if (dvoracScript.playAction == "discardDLP2")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+                                dvoracScript.playAction = "play";
+
+                                if (dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 1].GetComponent<CardProperties>().cardRarity == dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 2].GetComponent<CardProperties>().cardRarity)
+                                {
+                                    StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
+                                    await new WaitForSeconds(1.5f);
+                                    if (dvoracScript.botDeck.Count == 0)
+                                    {
+                                        gameLoopScript.EndGame("victory");
+                                        return;
+                                    }
+                                    StartCoroutine(botScript.BotTurn(2.6f, .4f));
+                                }
+                                else
+                                {
+                                    StartCoroutine(botScript.BotTurn(2.6f, .4f));
+                                }
+                            }
+                            else if (dvoracScript.playAction == "discardDLB")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+                                dvoracScript.playAction = "play";
+                                dvoracScript.gameplayMsg.text = "";
+                            }
                         }
                         else
-                        {
+                        { // Cards are being roofed
                             dvoracScript.castleDeck.Add(dvoracScript.playerDeck[cardIndex]);
+
+                            // Remove card from playerDeck list
                             dvoracScript.playerDeck.RemoveAt(cardIndex);
-                            zoomable = false;
-                            FlipCardOn("back");
+
+                            if (dvoracScript.playAction == "discardSKP1")
+                            { // srebrnaKula first player card
+                                // If player has no cards left; end game
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                zoomable = false;
+                                FlipCardOn("back");
+
+                                dvoracScript.playAction = "discardSKP2";
+                                // Disable player input
+                                dvoracScript.playerTurn = false;
+                                StartCoroutine(botScript.BotDiscard(1.1f, 0.4f, "castle"));
+                                await new WaitForSeconds(1.5f);
+                                // If bot has no cards left; end game
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
+                                    return;
+                                }
+                                dvoracScript.gameplayMsg.text = "Krovaj kartu.";
+                                dvoracScript.playerTurn = true;
+                            }
+                            else if (dvoracScript.playAction == "discardSKP2")
+                            { // srebrnaKula second player card
+                                // If player has no cards left; end game
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                zoomable = false;
+                                FlipCardOn("back");
+
+                                dvoracScript.playAction = "play";
+                                dvoracScript.playerTurn = false;
+                                StartCoroutine(botScript.BotDiscard(1.1f, 0.4f, "castle"));
+                                await new WaitForSeconds(1.5f);
+                                // If player has no cards left; end game
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
+                                    return;
+                                }
+
+                                dvoracScript.PlayNext("yard");
+
+                                StartCoroutine(botScript.BotTurn(2.6f, .4f));
+                            }
+                            else if (dvoracScript.playAction == "discardSKB1")
+                            { // srebrnaKula after first bot card
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                zoomable = false;
+                                FlipCardOn("back");
+
+                                dvoracScript.playerTurn = false;
+
+                                StartCoroutine(botScript.BotDiscard(1.1f, .4f, "castle"));
+                                await new WaitForSeconds(1.5f);
+
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
+                                    return;
+                                }
+
+                                dvoracScript.gameplayMsg.text = "Krovaj kartu.";
+                                dvoracScript.playAction = "discardSKB2";
+                                dvoracScript.playerTurn = true;
+                            }
+                            else if (dvoracScript.playAction == "discardSKB2")
+                            { // srebrnaKula after second bot card
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
+                                    return;
+                                }
+
+                                zoomable = false;
+                                FlipCardOn("back");
+
+                                dvoracScript.PlayNext("yard");
+                                dvoracScript.playAction = "play";
+                                dvoracScript.gameplayMsg.text = "";
+                                dvoracScript.playerTurn = true;
+                            }
                         }
-                        //dvoracScript.playerDeck.RemoveAt(cardIndex);
                         draggable = false;
                         break;
                     }

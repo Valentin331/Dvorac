@@ -38,6 +38,8 @@ public class Dvorac : MonoBehaviour
     public GameObject playerArea;
     public GameObject botArea;
     public GameObject cardZoomDisplay;
+    public GameObject cardReveal1;
+    public GameObject cardReveal2;
     public Text gameplayMsg;
     public Text botCardCount;
 
@@ -55,6 +57,8 @@ public class Dvorac : MonoBehaviour
     private void Start()
     {
         cardZoomDisplay.SetActive(false);
+        cardReveal1.SetActive(false);
+        cardReveal2.SetActive(false);
         cardMoveAnimatorScript = GetComponent<CardMoveAnimator>();
     }
 
@@ -244,5 +248,17 @@ public class Dvorac : MonoBehaviour
 
             Destroy(cardInstance);
         }
+    }
+
+    public void RevealCard(GameObject card, GameObject where)
+    {
+        where.SetActive(true);
+        where.GetComponent<Image>().sprite = card.GetComponent<CardProperties>().cardFront;
+    }
+
+    public void CancelRevealCard()
+    {
+        cardReveal1.SetActive(false);
+        cardReveal2.SetActive(false);
     }
 }

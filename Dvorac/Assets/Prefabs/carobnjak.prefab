@@ -93,6 +93,8 @@ MonoBehaviour:
   cardFront: {fileID: 21300000, guid: e3d3b8ace00639943b43b6abb87759f3, type: 3}
   cardBack: {fileID: 21300000, guid: efffaa9f949980f47a4f067edbbc7236, type: 3}
   cardCode: carobnjak
+  cardSymbol: m
+  cardRarity: 4
   playScreen: {fileID: 0}
   gameManager: {fileID: 0}
   cardZoomDisplay: {fileID: 0}
