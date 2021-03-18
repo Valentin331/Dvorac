@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,11 +10,41 @@ public class GameLoop : MonoBehaviour
     public GameObject mainMenuScreen;
     public GameObject pauseScreen;
     public GameObject difficultySelectScreen;
+    public GameObject settingsScreen;
     public Text endGameMsg;
     public int botDifficulty;
 
     private Dvorac dvoracScript;
     private AudioManager audioManagerScript;
+        
+    // Settings
+    // Audio variables
+    public float volumeMaster;
+    public float volumeOST;
+    public float volumeEffects;
+    // Graphic variables
+    public int UIRed;
+    public int UIGreen;
+    public int UIBlue;
+
+    // Images
+    public Image endGameImage;
+    public Image pauseScreenImage;
+    public Image settingsScreenImage;
+    public Image difficutyScreenImage;
+
+
+    // =========== Helper Functions ===========
+
+    private float Round2Decimal(float value, int decPlaces)
+    {
+        return (float)Math.Round(value, decPlaces);
+    }
+
+    private float Round2DecimalInt(float value, int decPlaces)
+    {
+        return (int)Math.Round(value, decPlaces);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +52,7 @@ public class GameLoop : MonoBehaviour
         endGameScreen.SetActive(false);
         pauseScreen.SetActive(false);
         difficultySelectScreen.SetActive(false);
+        settingsScreen.SetActive(false);
         audioManagerScript.PlaySound("mainOST");
     }
 
@@ -68,6 +100,16 @@ public class GameLoop : MonoBehaviour
     public void ContinueGame()
     {
         pauseScreen.SetActive(false);
+    }
+
+    public void SettingsScreen()
+    {
+        settingsScreen.SetActive(true);
+    }
+
+    public void exitSettingsScreen()
+    {
+        settingsScreen.SetActive(false);
     }
 
     public void EndGame(string state)
@@ -120,5 +162,46 @@ public class GameLoop : MonoBehaviour
         difficultySelectScreen.SetActive(true);
         endGameScreen.SetActive(false);
         mainMenuScreen.SetActive(false);
+    }
+
+    // Sliders volume input functions
+    public void MasterVolumeInput(float value)
+    {
+        volumeMaster = Round2Decimal(value, 2);   
+    }
+
+    public void OSTVolumeInput(float value)
+    {
+        volumeOST = Round2Decimal(value, 2);
+    }
+
+    public void EffectsVolumeInput(float value)
+    {
+        volumeEffects = Round2Decimal(value, 2);
+    }
+
+    // Sliders colors input functions
+    public void RedColorInput(float value)
+    {
+        UIRed = (int)value;
+    }
+
+    public void GreenColorInput(float value)
+    {
+        UIGreen = (int)value;
+    }
+
+    public void BlueColorInput(float value)
+    {
+        UIBlue = (int)value;
+    }
+
+    // Applying UI color changes function
+    public void ApplyUIColorChanges()
+    {
+        endGameScreen.GetComponent<Image>().color = new Color32((byte)UIRed, (byte)UIGreen, (byte)UIBlue, 255);
+        pauseScreen.GetComponent<Image>().color = new Color32((byte)UIRed, (byte)UIGreen, (byte)UIBlue, 255);
+        difficultySelectScreen.GetComponent<Image>().color = new Color32((byte)UIRed, (byte)UIGreen, (byte)UIBlue, 255);
+        settingsScreen.GetComponent<Image>().color = new Color32((byte)UIRed, (byte)UIGreen, (byte)UIBlue, 255);
     }
 }
