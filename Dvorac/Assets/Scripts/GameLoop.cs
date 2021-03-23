@@ -11,6 +11,7 @@ public class GameLoop : MonoBehaviour
     public GameObject pauseScreen;
     public GameObject difficultySelectScreen;
     public GameObject settingsScreen;
+    public GameObject instructionsScreen;
     public Text endGameMsg;
     public int botDifficulty;
 
@@ -53,6 +54,7 @@ public class GameLoop : MonoBehaviour
         pauseScreen.SetActive(false);
         difficultySelectScreen.SetActive(false);
         settingsScreen.SetActive(false);
+        instructionsScreen.SetActive(false);
         audioManagerScript.PlaySound("mainOST");
     }
 
@@ -68,6 +70,7 @@ public class GameLoop : MonoBehaviour
         endGameScreen.SetActive(false);
         pauseScreen.SetActive(false);
         difficultySelectScreen.SetActive(false);
+        instructionsScreen.SetActive(false);
         StartCoroutine(dvoracScript.StartNewGame());
     }
 
@@ -112,6 +115,16 @@ public class GameLoop : MonoBehaviour
         settingsScreen.SetActive(false);
     }
 
+    public void InstructionsScreen()
+    {
+        instructionsScreen.SetActive(true);
+    }
+
+    public void ExitInstructionsScreen()
+    {
+        instructionsScreen.SetActive(false);
+    }
+
     public void EndGame(string state)
     {
         endGameScreen.SetActive(true);
@@ -119,12 +132,13 @@ public class GameLoop : MonoBehaviour
 
         if (state == "victory")
         {
-            endGameMsg.text = "Dobio si,";
+            endGameMsg.text = "Pobjedio si!";
             audioManagerScript.PlaySound("victoryScreen");
         }
         else if (state == "defeat")
         {
-            endGameMsg.text = "Bravo debilu glup si u pičku materinu";
+            endGameMsg.text = "Izgubio si.";
+            audioManagerScript.PlaySound("defeatScreen");
         }
         dvoracScript.ClearBoard();
         dvoracScript.dropZoneCastle.GetComponent<Image>().color = new Color32(255, 255, 255, 0);

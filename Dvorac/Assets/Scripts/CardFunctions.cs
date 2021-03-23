@@ -225,11 +225,20 @@ public class CardFunctions : MonoBehaviour
         dvoracScript.playAction = "discardDLP1";
     }
 
-    public void SvetacPlayer()
+    public async void SvetacPlayer()
     {
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("svetac");
+
+        if (dvoracScript.playerDeck.Count < 12)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                dvoracScript.FetchCard("player");
+                await new WaitForSeconds(.2f);
+            }
+        }
 
         EndOfTurn("player");
     }
@@ -279,22 +288,58 @@ public class CardFunctions : MonoBehaviour
         EndOfTurn("player");
     }
 
-    public void VodorigaPlayer()
+    public async void VodorigaPlayer()
     {
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("vodoriga");
 
+        dvoracScript.MlineCard();
+
+        await new WaitForSeconds(.4f);
+
         EndOfTurn("player");
     }
 
-    public void PatuljakPlayer()
+    public async void PatuljakPlayer()
     {
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("patuljak");
 
-        EndOfTurn("player");
+        if (dvoracScript.playerDeck.Count() < dvoracScript.botDeck.Count)
+        {
+            StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
+
+            await new WaitForSeconds(1.5f);
+
+            if (dvoracScript.botDeck.Count == 0)
+            {
+                gameLoopScript.EndGame("victory");
+                return;
+            }
+
+            StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
+
+            await new WaitForSeconds(1.5f);
+
+            if (dvoracScript.botDeck.Count == 0)
+            {
+                gameLoopScript.EndGame("victory");
+                return;
+            }
+        }
+        else
+        {
+            if (dvoracScript.playerDeck.Count == 0)
+            {
+                gameLoopScript.EndGame("defeat");
+                return;
+            }
+
+            dvoracScript.playAction = "discardPP1";
+            dvoracScript.gameplayMsg.text = "Odbaci prvu kartu.";
+        }
     }
 
     public void KoloSrecePlayer()
@@ -306,20 +351,44 @@ public class CardFunctions : MonoBehaviour
         EndOfTurn("player");
     }
 
-    public void LovacPlayer()
+    public async void LovacPlayer()
     {
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("lovac");
 
+        dvoracScript.CaptureCard("player");
+
+        await new WaitForSeconds(.4f);
+
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
+
+        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count.ToString();
+
         EndOfTurn("player");
     }
 
-    public void DivPlayer()
+    public async void DivPlayer()
     {
         // TODO:
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("div");
+
+        dvoracScript.CaptureCard("player");
+
+        await new WaitForSeconds(.4f);
+
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
+
+        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count.ToString();
 
         EndOfTurn("player");
     }
@@ -330,7 +399,16 @@ public class CardFunctions : MonoBehaviour
         // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("kocija");
 
-        EndOfTurn("player");
+        // If player has no cards left; end game
+        if (dvoracScript.playerDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("defeat");
+            return;
+        }
+
+        dvoracScript.PlayNext("castle");
+        dvoracScript.gameplayMsg.text = "Krovaj kartu.";
+        dvoracScript.playAction = "discardKP";
     }
 
     public void NocnaMoraPlayer()
@@ -542,11 +620,20 @@ public class CardFunctions : MonoBehaviour
         }
     }
 
-    public void SvetacBot()
+    public async void SvetacBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("svetac");
+
+        if (dvoracScript.botDeck.Count < 12)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                dvoracScript.FetchCard("bot");
+                await new WaitForSeconds(.2f);
+            }
+        }
 
         EndOfTurn("bot");
     }
@@ -596,22 +683,61 @@ public class CardFunctions : MonoBehaviour
         EndOfTurn("bot");
     }
 
-    public void VodorigaBot()
+    public async void VodorigaBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("vodoriga");
 
+        dvoracScript.MlineCard();
+
+        await new WaitForSeconds(.4f);
+
         EndOfTurn("bot");
     }
 
-    public void PatuljakBot()
+    public async void PatuljakBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("patuljak");
 
-        EndOfTurn("bot");
+        if(dvoracScript.playerDeck.Count() < dvoracScript.botDeck.Count)
+        {
+            if (dvoracScript.botDeck.Count == 0)
+            {
+                gameLoopScript.EndGame("victory");
+                return;
+            }
+
+            StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
+
+            await new WaitForSeconds(1.5f);
+
+            if (dvoracScript.botDeck.Count == 0)
+            {
+                gameLoopScript.EndGame("victory");
+                return;
+            }
+
+            StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
+
+            await new WaitForSeconds(1.5f);
+
+            EndOfTurn("bot");
+        }
+        else
+        {
+            if (dvoracScript.botDeck.Count == 0)
+            {
+                gameLoopScript.EndGame("victory");
+                return;
+            }
+
+            dvoracScript.playAction = "discardPB1";
+            dvoracScript.playerTurn = true;
+            dvoracScript.gameplayMsg.text = "Odbaci prvu kartu.";
+        }
     }
 
     public void KoloSreceBot()
@@ -623,29 +749,70 @@ public class CardFunctions : MonoBehaviour
         EndOfTurn("bot");
     }
 
-    public void LovacBot()
+    public async void LovacBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("lovac");
 
+        dvoracScript.CaptureCard("bot");
+
+        await new WaitForSeconds(.4f);
+
+        if (dvoracScript.playerDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("defeat");
+            return;
+        }
+
+        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count.ToString();
+
         EndOfTurn("bot");
     }
 
-    public void DivBot()
+    public async void DivBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("div");
 
+        dvoracScript.CaptureCard("bot");
+
+        await new WaitForSeconds(.4f);
+
+        if (dvoracScript.playerDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("defeat");
+            return;
+        }
+
+        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count.ToString();
+
         EndOfTurn("bot");
     }
 
-    public void KocijaBot()
+    public async void KocijaBot()
     {
         // TODO:
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("kocija");
+
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
+
+        dvoracScript.PlayNext("castle");
+
+        StartCoroutine(botScript.BotDiscard(1.1f, .4f, "castle"));
+        await new WaitForSeconds(1.5f);
+
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
 
         EndOfTurn("bot");
     }
