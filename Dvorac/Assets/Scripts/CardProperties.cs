@@ -274,6 +274,53 @@ public class CardProperties : MonoBehaviour
                                 dvoracScript.playAction = "play";
                                 dvoracScript.gameplayMsg.text = "";
                             }
+                            else if (dvoracScript.playAction == "discardPB1")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                dvoracScript.playAction = "discardPB2";
+                                dvoracScript.gameplayMsg.text = "Odbaci drugu kartu.";
+                            }
+                            else if (dvoracScript.playAction == "discardPB2")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                dvoracScript.playAction = "play";
+                                dvoracScript.gameplayMsg.text = "";
+
+                                dvoracScript.playerTurn = true;
+                            }
+                            else if (dvoracScript.playAction == "discardPP1")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                dvoracScript.gameplayMsg.text = "Odbaci drugu kartu.";
+                                dvoracScript.playAction = "discardPP2";
+                            }
+                            else if (dvoracScript.playAction == "discardPP2")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                dvoracScript.playAction = "play";
+
+                                StartCoroutine(botScript.BotTurn(2.6f, .4f));
+                            }
                         }
                         else
                         { // Cards are being roofed
@@ -376,6 +423,24 @@ public class CardProperties : MonoBehaviour
                                 dvoracScript.playAction = "play";
                                 dvoracScript.gameplayMsg.text = "";
                                 dvoracScript.playerTurn = true;
+                            }
+                            else if (dvoracScript.playAction == "discardKP")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                zoomable = false;
+                                FlipCardOn("back");
+
+                                dvoracScript.playAction = "play";
+                                dvoracScript.playerTurn = false;
+
+                                dvoracScript.PlayNext("yard");
+
+                                StartCoroutine(botScript.BotTurn(2.6f, .4f));
                             }
                         }
                         draggable = false;
