@@ -1717,7 +1717,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 255
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 133
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -4302,6 +4302,7 @@ MonoBehaviour:
   botArea: {fileID: 666431271}
   dropZoneYard: {fileID: 2074832803}
   dropZoneCastle: {fileID: 1018641388}
+  botInfoPresumedBadCardsInCastle: 0
   botMessages: []
 --- !u!114 &1014518982
 MonoBehaviour:
@@ -7906,7 +7907,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 255
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 190
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -8406,7 +8407,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 255
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 46
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:

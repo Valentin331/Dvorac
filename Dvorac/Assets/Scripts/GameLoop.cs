@@ -62,6 +62,9 @@ public class GameLoop : MonoBehaviour
     {
         dvoracScript = GetComponent<Dvorac>();
         audioManagerScript = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        UIRed = 190;
+        UIGreen = 133;
+        UIBlue = 46;
     }
 
     public void StartGame()
