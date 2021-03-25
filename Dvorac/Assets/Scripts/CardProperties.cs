@@ -18,6 +18,8 @@ public class CardProperties : MonoBehaviour
     public bool zoomable = false;
     public bool draggable = false;
 
+    public int rarity;
+
     private GameObject zoomInstance;
     private Vector2 startPosition;
     private bool isBeingDragged = false;

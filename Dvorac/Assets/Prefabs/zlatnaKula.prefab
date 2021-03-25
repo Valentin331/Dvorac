@@ -100,6 +100,7 @@ MonoBehaviour:
   cardZoomDisplay: {fileID: 0}
   zoomable: 0
   draggable: 0
+  rarity: 2
 --- !u!114 &-8065708588093336498
 MonoBehaviour:
   m_ObjectHideFlags: 0
