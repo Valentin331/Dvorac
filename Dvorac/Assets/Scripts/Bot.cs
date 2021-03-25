@@ -8,21 +8,22 @@ public class Bot : MonoBehaviour
     public GameObject playScreen;
     public GameObject botArea;
     public GameObject dropZoneYard;
+    public GameObject dropZoneCastle;
     public int botInfoPresumedBadCardsInCastle;
 
     public List<string> botMessages;
     private Dvorac dvoracScript;
     private GameLoop gameLoopScript;
+    private CardFunctions cardFunctionsScript;
     private CardMoveAnimator cardMoveAnimatorScript;
     private Dictionary<string, int> scoreDictionary;
     private int score, extra, oneStarCounter, twoStarCounter, threeStarCounter, fourStarCounter, fiveStarCounter, nocnaMoraCounter, sunCounter, moonCounter, starCounter, vodorigaCounter, svetacCarobnjakInBotDeck, levijatanInEitherDeck;
     private List<string> oneStarCards, twoStarCards, threeStarCards, fourStarCards, fiveStarCards, sunSymbolCards, moonSymbolCards, starSymbolCards;
-    
-
 
     private void Awake()
     {
         dvoracScript = GetComponent<Dvorac>();
+        cardFunctionsScript = GetComponent<CardFunctions>();
         cardMoveAnimatorScript = GetComponent<CardMoveAnimator>();
         gameLoopScript = GetComponent<GameLoop>();
         botMessages.Add("Bot razmišlja koju će kartu baciti...");
@@ -37,7 +38,6 @@ public class Bot : MonoBehaviour
         sunSymbolCards = new List<string> { "objeseniCovjek", "srebrnaKula", "dvorskaLuda", "carobnjak", "vjestica", "vrag" };
         moonSymbolCards = new List<string> { "goruciCovjek", "zlatnaKula", "vitez", "svetac", "kraljica", "kralj" };
         starSymbolCards = new List<string> { "vodoriga", "patuljak", "koloSrece", "lovac", "div", "kocija", "nocnaMora", "glasnik", "osuda", "jednorog", "behemot", "levijatan" };
-
     }
 
     public IEnumerator BotTurn(float wait, float animationDuration)
@@ -47,27 +47,25 @@ public class Bot : MonoBehaviour
         //Bot takes card from the top of the castle pile and removes 1 presumed bad card if any exist
         if (botInfoPresumedBadCardsInCastle != 0) botInfoPresumedBadCardsInCastle -= 1;
 
-        // Disable player input and display bot turn message.
-        dvoracScript.playerTurn = false;
+        // Display bot turn message.
         dvoracScript.gameplayMsg.text = botMessages[Random.Range(0, botMessages.Count)];
 
         //Selecting next cart the bot will play based on chosen difficulty
         int cardIndex;
         int cardCounter;
 
-        if (gameLoopScript.botDifficulty == 1)
+        //Middle difficulty bot that chooses a random card
+        if (gameLoopScript.botDifficulty == 2)
         {
-            //najgora karta (suprotno od hard)
-            cardIndex = 0;
-        }
-        else if (gameLoopScript.botDifficulty == 2)
-        {
-            //Random card selected
             cardIndex = Random.Range(0, dvoracScript.botDeck.Count);
+            
         }
         else
         {
             Debug.Log("POCETAK TURNA -- POCETAK TURNA -- POCETAK TURNA");
+
+            //Initial cardIndex that gets revalued later, to prevent errors in code
+            cardIndex = -1;
 
             //temp botdeck print
             foreach (GameObject karta in dvoracScript.botDeck)
@@ -77,19 +75,22 @@ public class Bot : MonoBehaviour
 
             foreach (GameObject card in dvoracScript.botDeck)
             {
-                if (scoreDictionary.ContainsKey(card.name)) {}
+                if (scoreDictionary.ContainsKey(card.name)) { }
                 else
                 {
-                    score = counter = extra = 0;
+                    score = 0;
                     switch (card.name)
                     {
                         case "goruciCovjek":
+                            Debug.Log("broj karata " + dvoracScript.botDeck.Count);
+                            Debug.Log("presumed bad " + botInfoPresumedBadCardsInCastle);
                             score = 25 * (12 - dvoracScript.botDeck.Count);
                             score -= botInfoPresumedBadCardsInCastle * 50;
                             scoreDictionary.Add(card.name, score);
                             break;
 
                         case "objeseniCovjek":
+                            extra = 0;
                             if (dvoracScript.botDeck.Count > 5)
                             {
                                 score = 50;
@@ -133,6 +134,7 @@ public class Bot : MonoBehaviour
                             break;
 
                         case "srebrnaKula":
+                            extra = 0;
                             if (dvoracScript.botDeck.Count < 4)
                             {
                                 score = 0;
@@ -387,54 +389,63 @@ public class Bot : MonoBehaviour
                 }
             }
 
-
-
             //temp score print
-            Debug.Log("Novi print scoreova---------");
             foreach (KeyValuePair<string, int> kvp in scoreDictionary)
             {
                 Debug.Log("karta: " + kvp.Key + "  score: " + kvp.Value);
             }
 
-            //Getting chosen card index based on max score
-            var keyOfMaxValue = scoreDictionary.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-            cardCounter = 0;
-            cardIndex = -1;
-            foreach (GameObject card in dvoracScript.botDeck)
+            if (gameLoopScript.botDifficulty == 1)
             {
-                if (card.GetComponent<CardProperties>().cardCode == keyOfMaxValue)
+                //Getting chosen card index based on min score
+                var keyOfMaxValue = scoreDictionary.Aggregate((x, y) => x.Value < y.Value ? x : y).Key;
+                cardCounter = 0;
+                foreach (GameObject card in dvoracScript.botDeck)
                 {
-                    cardIndex = cardCounter;
-                    break;
+                    if (card.GetComponent<CardProperties>().cardCode == keyOfMaxValue)
+                    {
+                        cardIndex = cardCounter;
+                        break;
+                    }
+                    cardCounter += 1;
                 }
-                cardCounter += 1;
             }
+            else if (gameLoopScript.botDifficulty == 3)
+            {
+                //Getting chosen card index based on max score
+                var keyOfMaxValue = scoreDictionary.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                cardCounter = 0;
+                foreach (GameObject card in dvoracScript.botDeck)
+                {
+                    if (card.GetComponent<CardProperties>().cardCode == keyOfMaxValue)
+                    {
+                        cardIndex = cardCounter;
+                        break;
+                    }
+                    cardCounter += 1;
+                }
+            }
+            
         }
         Debug.Log("karta je: " + dvoracScript.botDeck[cardIndex]);
+
         // Select card which will be played.
-        
         GameObject selectedCard = dvoracScript.botDeck[cardIndex];
 
         yield return new WaitForSeconds(wait);
 
         // Instantiate a card and start it's animation.
-        CardProperties cardPropertiesScript = selectedCard.GetComponent<CardProperties>();
-        cardPropertiesScript.FlipCardOn("back");
-        cardPropertiesScript.zoomable = false;
-        cardPropertiesScript.draggable = false;
+        //CardProperties cardPropertiesScript = selectedCard.GetComponent<CardProperties>();
         GameObject cardInstance = Instantiate(selectedCard, botArea.transform.position, Quaternion.identity);
+        cardInstance.GetComponent<CardProperties>().FlipCardOn("back");
+        cardInstance.GetComponent<CardProperties>().zoomable = false;
+        cardInstance.GetComponent<CardProperties>().draggable = false;
         cardInstance.transform.SetParent(playScreen.transform, true);
         cardInstance.transform.localScale = new Vector3(1, 1, 1);
 
         StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneYard.transform.position, animationDuration));
 
         yield return new WaitForSeconds(animationDuration);
-
-        // If played card is goruciCovjek: fetch card.
-        if (selectedCard.GetComponent<CardProperties>().cardCode == "goruciCovjek")
-        {
-            dvoracScript.FetchCard("bot");
-        }
 
         // Actually move the card to correct list and set it's parent.
         cardInstance.transform.SetParent(dvoracScript.dropZoneYard.transform, true);
@@ -444,8 +455,72 @@ public class Bot : MonoBehaviour
         dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
         dvoracScript.botDeck.RemoveAt(cardIndex);
 
-        // Clear gameplay message and enable player input.
+        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
+
+        // Clear gameplay message.
         dvoracScript.gameplayMsg.text = "";
-        dvoracScript.playerTurn = true;
+
+        // Call the correct function in regard of what card was played
+        cardFunctionsScript.botCardFunctionalities[dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 1].GetComponent<CardProperties>().name].Invoke();
+    }
+
+    public IEnumerator BotDiscard(float wait, float animationDuration, string deck)
+    {
+        if (deck == "yard")
+        {
+            dvoracScript.gameplayMsg.text = "Bot gleda koju bi kartu odbacio...";
+        }
+        else if (deck == "castle")
+        {
+            dvoracScript.gameplayMsg.text = "Bot gleda koju bi kartu krovao...";
+        }
+        // TODO:
+        // Write algorithm for selecting card to roof discard.
+        int cardIndex = Random.Range(0, dvoracScript.botDeck.Count);
+        GameObject selectedCard = dvoracScript.botDeck[cardIndex];
+
+        yield return new WaitForSeconds(wait);
+
+        if (deck == "yard")
+        {
+            dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
+        }
+        else if (deck == "castle")
+        {
+            dvoracScript.castleDeck.Add(dvoracScript.botDeck[cardIndex]);
+        }
+        dvoracScript.botDeck.RemoveAt(cardIndex);
+
+        GameObject cardInstance = Instantiate(selectedCard, botArea.transform.position, Quaternion.identity);
+        cardInstance.GetComponent<CardProperties>().FlipCardOn("back");
+        cardInstance.GetComponent<CardProperties>().zoomable = false;
+        cardInstance.GetComponent<CardProperties>().draggable = false;
+        cardInstance.transform.SetParent(playScreen.transform, true);
+        cardInstance.transform.localScale = new Vector3(1, 1, 1);
+
+        if (deck == "yard")
+        {
+            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneYard.transform.position, animationDuration));
+        }
+        else if (deck == "castle")
+        {
+            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneCastle.transform.position, animationDuration));
+        }
+        dvoracScript.gameplayMsg.text = "";
+
+        yield return new WaitForSeconds(animationDuration);
+
+        if (deck == "yard")
+        {
+            cardInstance.transform.SetParent(dvoracScript.dropZoneYard.transform, true);
+            cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
+            cardInstance.GetComponent<CardProperties>().zoomable = true;
+        }
+        else if (deck == "castle")
+        {
+            cardInstance.transform.SetParent(dvoracScript.dropZoneCastle.transform, true);
+        }
+
+        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
     }
 }
