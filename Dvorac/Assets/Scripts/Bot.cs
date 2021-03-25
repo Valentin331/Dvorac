@@ -8,12 +8,17 @@ public class Bot : MonoBehaviour
     public GameObject playScreen;
     public GameObject botArea;
     public GameObject dropZoneYard;
+    public int botInfoPresumedBadCardsInCastle;
 
     public List<string> botMessages;
     private Dvorac dvoracScript;
     private GameLoop gameLoopScript;
     private CardMoveAnimator cardMoveAnimatorScript;
     private Dictionary<string, int> scoreDictionary;
+    private int score, extra, oneStarCounter, twoStarCounter, threeStarCounter, fourStarCounter, fiveStarCounter, nocnaMoraCounter, sunCounter, moonCounter, starCounter, vodorigaCounter, svetacCarobnjakInBotDeck, levijatanInEitherDeck;
+    private List<string> oneStarCards, twoStarCards, threeStarCards, fourStarCards, fiveStarCards, sunSymbolCards, moonSymbolCards, starSymbolCards;
+    
+
 
     private void Awake()
     {
@@ -24,11 +29,23 @@ public class Bot : MonoBehaviour
         botMessages.Add("Bot smišlja neku opaku taktiku..");
         botMessages.Add("Sad je bot na redu...");
         scoreDictionary = new Dictionary<string, int>();
+        oneStarCards = new List<string> { "goruciCovjek", "objeseniCovjek", "vodoriga" };
+        twoStarCards = new List<string> { "zlatnaKula", "srebrnaKula", "patuljak" };
+        threeStarCards = new List<string> { "vitez", "dvorskaLuda", "koloSrece", "lovac" };
+        fourStarCards = new List<string> { "svetac", "carobnjak", "div", "kocija", "nocnaMora", "glasnik" };
+        fiveStarCards = new List<string> { "kraljica", "vjestica", "kralj", "vrag", "osuda", "jednorog", "behemot", "levijatan" };
+        sunSymbolCards = new List<string> { "objeseniCovjek", "srebrnaKula", "dvorskaLuda", "carobnjak", "vjestica", "vrag" };
+        moonSymbolCards = new List<string> { "goruciCovjek", "zlatnaKula", "vitez", "svetac", "kraljica", "kralj" };
+        starSymbolCards = new List<string> { "vodoriga", "patuljak", "koloSrece", "lovac", "div", "kocija", "nocnaMora", "glasnik", "osuda", "jednorog", "behemot", "levijatan" };
+
     }
 
     public IEnumerator BotTurn(float wait, float animationDuration)
     {
         scoreDictionary = new Dictionary<string, int>();
+
+        //Bot takes card from the top of the castle pile and removes 1 presumed bad card if any exist
+        if (botInfoPresumedBadCardsInCastle != 0) botInfoPresumedBadCardsInCastle -= 1;
 
         // Disable player input and display bot turn message.
         dvoracScript.playerTurn = false;
@@ -63,85 +80,317 @@ public class Bot : MonoBehaviour
                 if (scoreDictionary.ContainsKey(card.name)) {}
                 else
                 {
+                    score = counter = extra = 0;
                     switch (card.name)
                     {
                         case "goruciCovjek":
-                            scoreDictionary.Add(card.name, 150);
+                            score = 25 * (12 - dvoracScript.botDeck.Count);
+                            score -= botInfoPresumedBadCardsInCastle * 50;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "objeseniCovjek":
-                            scoreDictionary.Add(card.name, 100);
+                            if (dvoracScript.botDeck.Count > 5)
+                            {
+                                score = 50;
+                            }
+                            else
+                            {
+                                foreach (GameObject card2 in dvoracScript.botDeck)
+                                {
+                                    if (moonSymbolCards.Contains(card2.name)) extra = 1;
+                                }
+                                score = 100 + extra * 50;
+                            }
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "zlatnaKula":
-                            scoreDictionary.Add(card.name, 100);
+                            if (dvoracScript.playerDeck.Count == 1 && dvoracScript.botDeck.Count > 2)
+                            {
+                                score = 0;
+                            }
+                            else
+                            {
+                                if (dvoracScript.botDeck.Count > 5)
+                                {
+                                    score = 175;
+                                }
+                                else
+                                {
+                                    if (botInfoPresumedBadCardsInCastle == 0)
+                                    {
+                                        score = 250;
+                                    }
+                                    else
+                                    {
+                                        if (botInfoPresumedBadCardsInCastle % 2 == 0) score = 175;
+                                        else score = 125;
+                                    }
+                                }
+                            }
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "srebrnaKula":
-                            scoreDictionary.Add(card.name, 100);
+                            if (dvoracScript.botDeck.Count < 4)
+                            {
+                                score = 0;
+                            }
+                            else
+                            {
+                                foreach (GameObject card2 in dvoracScript.botDeck)
+                                {
+                                    if (moonSymbolCards.Contains(card2.name)) extra += 1;
+                                }
+                                if (extra >= 2) score = 75;
+                                else score = 10;
+                            }
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "vitez":
-                            scoreDictionary.Add(card.name, 100);
+                            if (dvoracScript.playerDeck.Count == 1) score = 350;
+                            else score = 275;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "dvorskaLuda":
-                            scoreDictionary.Add(card.name, 100);
+                            oneStarCounter = twoStarCounter = threeStarCounter = fourStarCounter = fiveStarCounter = 0;
+                            foreach (GameObject card2 in dvoracScript.botDeck)
+                            {
+                                if (oneStarCards.Contains(card2.name)) oneStarCounter += 1;
+                                else if (twoStarCards.Contains(card2.name)) twoStarCounter += 1;
+                                else if (threeStarCards.Contains(card2.name)) threeStarCounter += 1;
+                                else if (fourStarCards.Contains(card2.name)) fourStarCounter += 1;
+                                else if (fiveStarCards.Contains(card2.name)) fiveStarCounter += 1;
+                            }
+                            if (oneStarCounter > 1 || twoStarCounter > 1 || threeStarCounter > 1 || fourStarCounter > 1 || fiveStarCounter > 1)
+                            {
+                                if (dvoracScript.playerDeck.Count == 1 && dvoracScript.botDeck.Count > 3) score = 200;
+                                else if (dvoracScript.botDeck.Count < 4) score = 0;
+                                else score = 75;
+                            }
+                            else
+                            {
+                                score = 10;
+                            }
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "svetac":
-                            scoreDictionary.Add(card.name, 100);
+                            nocnaMoraCounter = 0;
+                            foreach (GameObject card2 in dvoracScript.yardDeck)
+                            {
+                                if (card2.name == "nocnaMora") nocnaMoraCounter += 1;
+                            }
+
+                            if (nocnaMoraCounter != 2)
+                            {
+                                if (dvoracScript.botDeck.Count < 12) score = 350;
+                                else score = 0;
+                            }
+                            else
+                            {
+                                if (dvoracScript.botDeck.Count < 6) score = 350;
+                                else score = 0;
+                            }
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "carobnjak":
-                            scoreDictionary.Add(card.name, 100);
+                            nocnaMoraCounter = 0;
+                            foreach (GameObject card2 in dvoracScript.yardDeck)
+                            {
+                                if (card2.name == "nocnaMora") nocnaMoraCounter += 1;
+                            }
+                            if (nocnaMoraCounter != 2)
+                            {
+                                if (dvoracScript.playerDeck.Count > 12 && dvoracScript.botDeck.Count < 14) score = 275;
+                                else if (dvoracScript.playerDeck.Count > 13 && dvoracScript.botDeck.Count < 14) score = 300;
+                                else if (dvoracScript.playerDeck.Count > 12 && dvoracScript.botDeck.Count < 13) score = 80;
+                                else score = 25;
+                            }
+                            else
+                            {
+                                if (dvoracScript.playerDeck.Count > 6 && dvoracScript.botDeck.Count < 8) score = 275;
+                                else if (dvoracScript.playerDeck.Count > 7 && dvoracScript.botDeck.Count < 8) score = 300;
+                                else if (dvoracScript.playerDeck.Count > 6 && dvoracScript.botDeck.Count < 7) score = 80;
+                                else score = 25;
+                            }
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "kraljica":
-                            scoreDictionary.Add(card.name, 100);
+                            score = 325;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "vjestica":
-                            scoreDictionary.Add(card.name, 100);
+                            if (dvoracScript.playerDeck.Count < 3 && dvoracScript.botDeck.Count > 2) score = 250;
+                            else if (dvoracScript.playerDeck.Count < 2 && dvoracScript.botDeck.Count > 2) score = 350;
+                            else score = 75;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "kralj":
-                            scoreDictionary.Add(card.name, 100);
+                            score = 324;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "vrag":
-                            scoreDictionary.Add(card.name, 100);
+                            if (dvoracScript.botDeck.Count < 3) score = 50;
+                            else score = 100;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "vodoriga":
-                            scoreDictionary.Add(card.name, 150);
+                            vodorigaCounter = levijatanInEitherDeck = 0;
+                            foreach (GameObject card2 in dvoracScript.yardDeck)
+                            {
+                                if (card2.name == "vodoriga") vodorigaCounter += 1;
+                                else if (card2.name == "levijatan") levijatanInEitherDeck += 1;
+                            }
+                            foreach (GameObject card2 in dvoracScript.botDeck)
+                            {
+                                if (card2.name == "vodoriga") vodorigaCounter += 1;
+                                else if (card2.name == "levijatan") levijatanInEitherDeck += 1;
+                            }
+                            score = (16 - vodorigaCounter) * 18;
+                            if (levijatanInEitherDeck == 0)
+                            {
+                                score += 100 * ((108 - dvoracScript.botDeck.Count - dvoracScript.yardDeck.Count) / 108);
+                            }
+                            else
+                            {
+                                score += 80;
+                            }
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "patuljak":
-                            scoreDictionary.Add(card.name, 100);
+                            if (dvoracScript.playerDeck.Count > dvoracScript.botDeck.Count - 1)
+                            {
+                                if (dvoracScript.playerDeck.Count < 3) score = 400;
+                                else score = 200;
+                            }
+                            else score = 0;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "koloSrece":
-                            scoreDictionary.Add(card.name, 100);
+                            sunCounter = moonCounter = starCounter = 0;
+                            foreach (GameObject card2 in dvoracScript.botDeck)
+                            {
+                                if (sunSymbolCards.Contains(card2.name)) sunCounter += 1;
+                                else if (moonSymbolCards.Contains(card2.name)) moonCounter += 1;
+                                else if (starSymbolCards.Contains(card2.name)) starCounter += 1;
+                            }
+                            if (sunCounter < moonCounter && starCounter < moonCounter) score = 225;
+                            else if (sunCounter < moonCounter && starCounter > moonCounter) score = 190;
+                            else score = 100;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "lovac":
-                            scoreDictionary.Add(card.name, 100);
+                            if (dvoracScript.playerDeck.Count == 1) score = 400;
+                            else if (dvoracScript.playerDeck.Count < 4) score = 200;
+                            else score = 150;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "div":
-                            scoreDictionary.Add(card.name, 100);
+                            moonCounter = 0;
+                            foreach (GameObject card2 in dvoracScript.botDeck)
+                            {
+                                if (moonSymbolCards.Contains(card2.name)) moonCounter += 1;
+                            }
+                            if (moonCounter > 0) score = 125;
+                            else score = 15;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "kocija":
-                            scoreDictionary.Add(card.name, 100);
+                            moonCounter = 0;
+                            foreach (GameObject card2 in dvoracScript.botDeck)
+                            {
+                                if (moonSymbolCards.Contains(card2.name)) moonCounter += 1;
+                            }
+                            if (moonCounter > 0) score = 75;
+                            else if (moonCounter > 12) score = 150;
+                            else score = 5;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "nocnaMora":
-                            scoreDictionary.Add(card.name, 100);
+                            svetacCarobnjakInBotDeck = 0;
+                            foreach (GameObject card2 in dvoracScript.botDeck)
+                            {
+                                if (card2.name == "svetac") svetacCarobnjakInBotDeck += 1;
+                                else if (card2.name == "carobnjak") svetacCarobnjakInBotDeck += 1;
+                            }
+                            if (svetacCarobnjakInBotDeck > 0) score = 225;
+                            else score = 100;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "glasnik":
-                            scoreDictionary.Add(card.name, 100);
+                            if (dvoracScript.playerDeck.Count == 1) score = 325;
+                            else if (dvoracScript.playerDeck.Count == 2) score = 275;
+                            else if (dvoracScript.playerDeck.Count == 3) score = 210;
+                            else if (dvoracScript.playerDeck.Count == 4) score = 180;
+                            else score = 100;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "osuda":
-                            scoreDictionary.Add(card.name, 100);
+                            score = 25 * (14 - dvoracScript.botDeck.Count) - (10 - dvoracScript.playerDeck.Count) * 15;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "jednorog":
-                            scoreDictionary.Add(card.name, 100);
+                            if (dvoracScript.playerDeck.Count < 5) score = 325;
+                            else score = 225;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "behemot":
-                            scoreDictionary.Add(card.name, 100);
+                            starCounter = 0;
+                            foreach (GameObject card2 in dvoracScript.yardDeck)
+                            {
+                                if (starSymbolCards.Contains(card2.name)) starCounter += 1;
+                            }
+                            score = 22 * (14 - dvoracScript.botDeck.Count) - (10 - dvoracScript.playerDeck.Count) * 15;
+                            if (starCounter % 2 == 1) score += 110;
+                            scoreDictionary.Add(card.name, score);
                             break;
+
                         case "levijatan":
-                            scoreDictionary.Add(card.name, 100);
+                            oneStarCounter = 0;
+                            foreach (GameObject card2 in dvoracScript.yardDeck)
+                            {
+                                if (oneStarCards.Contains(card2.name)) oneStarCounter += 1;
+                            }
+                            sunCounter = moonCounter = starCounter = 0;
+                            foreach (GameObject card2 in dvoracScript.botDeck)
+                            {
+                                if (sunSymbolCards.Contains(card2.name)) sunCounter += 1;
+                                else if (moonSymbolCards.Contains(card2.name)) moonCounter += 1;
+                                else if (starSymbolCards.Contains(card2.name)) starCounter += 1;
+                            }
+                            if (dvoracScript.botDeck.Count < 5 && sunCounter < moonCounter && starCounter < moonCounter) score = 200;
+                            else if (dvoracScript.botDeck.Count < 3 && sunCounter < moonCounter && starCounter < moonCounter) score = 120;
+                            score += oneStarCounter * 20;
+                            scoreDictionary.Add(card.name, score);
                             break;
                     }
                 }
             }
 
+
+
             //temp score print
+            Debug.Log("Novi print scoreova---------");
             foreach (KeyValuePair<string, int> kvp in scoreDictionary)
             {
                 Debug.Log("karta: " + kvp.Key + "  score: " + kvp.Value);
