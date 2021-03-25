@@ -158,6 +158,9 @@ public class CardFunctions : MonoBehaviour
     {
         // TODO:
         // Write code that will be executed when player plays this card
+
+        botScript.botInfoPresumedBadCardsInCastle += 4;
+
         audioManagerScript.PlaySound("srebrnaKula");
 
         // If player has no cards left; end game
@@ -517,6 +520,9 @@ public class CardFunctions : MonoBehaviour
     {
         // TODO:
         // Write code that will be executed when bot plays this card
+
+        botScript.botInfoPresumedBadCardsInCastle += 4;
+
         audioManagerScript.PlaySound("srebrnaKula");
 
         if (dvoracScript.botDeck.Count == 0)
