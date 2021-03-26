@@ -4304,7 +4304,9 @@ MonoBehaviour:
   dropZoneCastle: {fileID: 1018641388}
   botInfoPresumedBadCardsInCastle: 0
   nocnaMoraCounter: 0
-  botMessages: []
+  botMessages1: []
+  botMessages2: []
+  botMessages3: []
 --- !u!114 &1014518982
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8308,7 +8310,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.494
+  m_Value: 0.5
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
