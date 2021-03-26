@@ -65,6 +65,7 @@ public class GameLoop : MonoBehaviour
         UIRed = 190;
         UIGreen = 133;
         UIBlue = 46;
+        volumeMaster = 1;
     }
 
     public void StartGame()

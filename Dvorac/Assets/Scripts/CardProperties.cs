@@ -300,11 +300,57 @@ public class CardProperties : MonoBehaviour
 
                                 dvoracScript.playerTurn = true;
                             }
+                            else if (dvoracScript.playAction == "discardPB3")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                dvoracScript.playerTurn = false;
+
+                                StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
+
+                                await new WaitForSeconds(1.5f);
+
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
+                                    return;
+                                }
+
+                                dvoracScript.playAction = "discardPB4";
+                                dvoracScript.playerTurn = true;
+                                dvoracScript.gameplayMsg.text = "Odbaci drugu kartu.";
+                            }
+                            else if (dvoracScript.playAction == "discardPB4")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                dvoracScript.playAction = "play";
+                                dvoracScript.gameplayMsg.text = "";
+
+                                dvoracScript.playerTurn = true;
+                            }
                             else if (dvoracScript.playAction == "discardPP1")
                             {
                                 if (dvoracScript.playerDeck.Count == 0)
                                 {
                                     gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+                                StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
+
+                                await new WaitForSeconds(1.5f);
+
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
                                     return;
                                 }
 
@@ -320,6 +366,37 @@ public class CardProperties : MonoBehaviour
                                 }
 
                                 dvoracScript.playAction = "play";
+
+                                StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
+
+                                await new WaitForSeconds(1.5f);
+
+                                if (dvoracScript.botDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("victory");
+                                    return;
+                                }
+
+                                StartCoroutine(botScript.BotTurn(2.6f, .4f));
+                            }
+                            else if (dvoracScript.playAction == "discardPP3")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                dvoracScript.gameplayMsg.text = "Odbaci drugu kartu.";
+                                dvoracScript.playAction = "discardPP4";
+                            }
+                            else if (dvoracScript.playAction == "discardPP4")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
 
                                 StartCoroutine(botScript.BotTurn(2.6f, .4f));
                             }

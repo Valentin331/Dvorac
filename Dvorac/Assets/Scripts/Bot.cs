@@ -100,6 +100,8 @@ public class Bot : MonoBehaviour
 
     public IEnumerator BotDiscard(float wait, float animationDuration, string deck)
     {
+        scoreDictionary = new Dictionary<string, int>();
+
         if (deck == "yard")
         {
             if (gameLoopScript.botDifficulty == 1) dvoracScript.gameplayMsg.text = "Woof woof... (Agatodemon gleda koju bi kartu odbacio...)";
