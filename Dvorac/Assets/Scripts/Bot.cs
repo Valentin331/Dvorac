@@ -9,15 +9,15 @@ public class Bot : MonoBehaviour
     public GameObject botArea;
     public GameObject dropZoneYard;
     public GameObject dropZoneCastle;
-    public int botInfoPresumedBadCardsInCastle;
+    public int botInfoPresumedBadCardsInCastle, nocnaMoraCounter;
 
-    public List<string> botMessages;
+    public List<string> botMessages1, botMessages2, botMessages3;
     private Dvorac dvoracScript;
     private GameLoop gameLoopScript;
     private CardFunctions cardFunctionsScript;
     private CardMoveAnimator cardMoveAnimatorScript;
     private Dictionary<string, int> scoreDictionary;
-    private int score, extra, oneStarCounter, twoStarCounter, threeStarCounter, fourStarCounter, fiveStarCounter, nocnaMoraCounter, sunCounter, moonCounter, starCounter, vodorigaCounter, svetacCarobnjakInBotDeck, levijatanInEitherDeck;
+    private int score, extra, oneStarCounter, twoStarCounter, threeStarCounter, fourStarCounter, fiveStarCounter, sunCounter, moonCounter, starCounter, vodorigaCounter, svetacCarobnjakInBotDeck, levijatanInEitherDeck;
     private List<string> oneStarCards, twoStarCards, threeStarCards, fourStarCards, fiveStarCards, sunSymbolCards, moonSymbolCards, starSymbolCards;
 
     private void Awake()
@@ -26,9 +26,15 @@ public class Bot : MonoBehaviour
         cardFunctionsScript = GetComponent<CardFunctions>();
         cardMoveAnimatorScript = GetComponent<CardMoveAnimator>();
         gameLoopScript = GetComponent<GameLoop>();
-        botMessages.Add("Bot razmišlja koju će kartu baciti...");
-        botMessages.Add("Bot smišlja neku opaku taktiku..");
-        botMessages.Add("Sad je bot na redu...");
+        botMessages1.Add("Woof woof... (Agatodemon razmišlja koju će kartu baciti...)");
+        botMessages1.Add("Woof woof... (Agatodemon smišlja neku opaku taktiku..");
+        botMessages1.Add("Sad je Agatodemon na redu...");
+        botMessages2.Add("Hermes al-Yazīd razmišlja koju će kartu baciti...");
+        botMessages2.Add("Hermes al-Yazīd smišlja neku opaku taktiku..");
+        botMessages2.Add("Sad je Hermes al-Yazīd na redu...");
+        botMessages3.Add("Sfingurina razmišlja koju će kartu baciti...");
+        botMessages3.Add("Sfingurina smišlja neku opaku taktiku..");
+        botMessages3.Add("Sad je Sfingurina na redu...");
         scoreDictionary = new Dictionary<string, int>();
         oneStarCards = new List<string> { "goruciCovjek", "objeseniCovjek", "vodoriga" };
         twoStarCards = new List<string> { "zlatnaKula", "srebrnaKula", "patuljak" };
@@ -45,11 +51,121 @@ public class Bot : MonoBehaviour
         scoreDictionary = new Dictionary<string, int>();
 
         //Bot takes card from the top of the castle pile and removes 1 presumed bad card if any exist
-        if (botInfoPresumedBadCardsInCastle != 0) botInfoPresumedBadCardsInCastle -= 1;
+        if (botInfoPresumedBadCardsInCastle > 0) botInfoPresumedBadCardsInCastle -= 1;
 
         // Display bot turn message.
-        dvoracScript.gameplayMsg.text = botMessages[Random.Range(0, botMessages.Count)];
+        if (gameLoopScript.botDifficulty == 1) dvoracScript.gameplayMsg.text = botMessages1[Random.Range(0, botMessages1.Count)];
+        else if (gameLoopScript.botDifficulty == 2) dvoracScript.gameplayMsg.text = botMessages2[Random.Range(0, botMessages2.Count)];
+        else dvoracScript.gameplayMsg.text = botMessages3[Random.Range(0, botMessages3.Count)];
 
+
+        int cardIndex = ChooseCard();
+
+        Debug.Log("karta je: " + dvoracScript.botDeck[cardIndex]);
+
+        // Select card which will be played.
+        GameObject selectedCard = dvoracScript.botDeck[cardIndex];
+
+        yield return new WaitForSeconds(wait);
+
+        // Instantiate a card and start it's animation.
+        //CardProperties cardPropertiesScript = selectedCard.GetComponent<CardProperties>();
+        GameObject cardInstance = Instantiate(selectedCard, botArea.transform.position, Quaternion.identity);
+        cardInstance.GetComponent<CardProperties>().FlipCardOn("back");
+        cardInstance.GetComponent<CardProperties>().zoomable = false;
+        cardInstance.GetComponent<CardProperties>().draggable = false;
+        cardInstance.transform.SetParent(playScreen.transform, true);
+        cardInstance.transform.localScale = new Vector3(1, 1, 1);
+
+        StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneYard.transform.position, animationDuration));
+
+        yield return new WaitForSeconds(animationDuration);
+
+        // Actually move the card to correct list and set it's parent.
+        cardInstance.transform.SetParent(dvoracScript.dropZoneYard.transform, true);
+        cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
+        cardInstance.GetComponent<CardProperties>().zoomable = true;
+
+        dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
+        dvoracScript.botDeck.RemoveAt(cardIndex);
+
+        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
+
+        // Clear gameplay message.
+        dvoracScript.gameplayMsg.text = "";
+
+        // Call the correct function in regard of what card was played
+        cardFunctionsScript.botCardFunctionalities[dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 1].GetComponent<CardProperties>().name].Invoke();
+    }
+
+    public IEnumerator BotDiscard(float wait, float animationDuration, string deck)
+    {
+        if (deck == "yard")
+        {
+            if (gameLoopScript.botDifficulty == 1) dvoracScript.gameplayMsg.text = "Woof woof... (Agatodemon gleda koju bi kartu odbacio...)";
+            else if (gameLoopScript.botDifficulty == 2) dvoracScript.gameplayMsg.text = "Hermes al-Yazīd gleda koju bi kartu odbacio...";
+            else dvoracScript.gameplayMsg.text = "Sfingurina gleda koju bi kartu odbacila...";
+        }
+        else if (deck == "castle")
+        {
+            if (gameLoopScript.botDifficulty == 1) dvoracScript.gameplayMsg.text = "Woof woof... (Agatodemon gleda koju bi kartu krovao...)";
+            else if (gameLoopScript.botDifficulty == 2) dvoracScript.gameplayMsg.text = "Hermes al-Yazīd gleda koju bi kartu krovao...";
+            else dvoracScript.gameplayMsg.text = "Sfingurina gleda koju bi kartu krovala...";
+        }
+
+        int cardIndex = ChooseCard();
+
+        GameObject selectedCard = dvoracScript.botDeck[cardIndex];
+        Debug.Log("broj karata" + dvoracScript.botDeck.Count);
+        Debug.Log("index" + cardIndex);
+
+        yield return new WaitForSeconds(wait);
+
+        if (deck == "yard")
+        {
+            dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
+        }
+        else if (deck == "castle")
+        {
+            dvoracScript.castleDeck.Add(dvoracScript.botDeck[cardIndex]);
+        }
+        dvoracScript.botDeck.RemoveAt(cardIndex);
+
+        GameObject cardInstance = Instantiate(selectedCard, botArea.transform.position, Quaternion.identity);
+        cardInstance.GetComponent<CardProperties>().FlipCardOn("back");
+        cardInstance.GetComponent<CardProperties>().zoomable = false;
+        cardInstance.GetComponent<CardProperties>().draggable = false;
+        cardInstance.transform.SetParent(playScreen.transform, true);
+        cardInstance.transform.localScale = new Vector3(1, 1, 1);
+
+        if (deck == "yard")
+        {
+            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneYard.transform.position, animationDuration));
+        }
+        else if (deck == "castle")
+        {
+            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneCastle.transform.position, animationDuration));
+        }
+        dvoracScript.gameplayMsg.text = "";
+
+        yield return new WaitForSeconds(animationDuration);
+
+        if (deck == "yard")
+        {
+            cardInstance.transform.SetParent(dvoracScript.dropZoneYard.transform, true);
+            cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
+            cardInstance.GetComponent<CardProperties>().zoomable = true;
+        }
+        else if (deck == "castle")
+        {
+            cardInstance.transform.SetParent(dvoracScript.dropZoneCastle.transform, true);
+        }
+
+        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
+    }
+
+    public int ChooseCard()
+    {
         //Selecting next cart the bot will play based on chosen difficulty
         int cardIndex;
         int cardCounter;
@@ -58,7 +174,6 @@ public class Bot : MonoBehaviour
         if (gameLoopScript.botDifficulty == 2)
         {
             cardIndex = Random.Range(0, dvoracScript.botDeck.Count);
-            
         }
         else
         {
@@ -79,12 +194,12 @@ public class Bot : MonoBehaviour
                 else
                 {
                     score = 0;
+                    Debug.Log("broj karata " + dvoracScript.botDeck.Count);
+                    Debug.Log("presumed bad " + botInfoPresumedBadCardsInCastle);
                     switch (card.name)
                     {
                         case "goruciCovjek":
-                            Debug.Log("broj karata " + dvoracScript.botDeck.Count);
-                            Debug.Log("presumed bad " + botInfoPresumedBadCardsInCastle);
-                            score = 25 * (12 - dvoracScript.botDeck.Count);
+                            score = 40 * (12 - dvoracScript.botDeck.Count);
                             score -= botInfoPresumedBadCardsInCastle * 50;
                             scoreDictionary.Add(card.name, score);
                             break;
@@ -425,102 +540,8 @@ public class Bot : MonoBehaviour
                     cardCounter += 1;
                 }
             }
-            
+
         }
-        Debug.Log("karta je: " + dvoracScript.botDeck[cardIndex]);
-
-        // Select card which will be played.
-        GameObject selectedCard = dvoracScript.botDeck[cardIndex];
-
-        yield return new WaitForSeconds(wait);
-
-        // Instantiate a card and start it's animation.
-        //CardProperties cardPropertiesScript = selectedCard.GetComponent<CardProperties>();
-        GameObject cardInstance = Instantiate(selectedCard, botArea.transform.position, Quaternion.identity);
-        cardInstance.GetComponent<CardProperties>().FlipCardOn("back");
-        cardInstance.GetComponent<CardProperties>().zoomable = false;
-        cardInstance.GetComponent<CardProperties>().draggable = false;
-        cardInstance.transform.SetParent(playScreen.transform, true);
-        cardInstance.transform.localScale = new Vector3(1, 1, 1);
-
-        StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneYard.transform.position, animationDuration));
-
-        yield return new WaitForSeconds(animationDuration);
-
-        // Actually move the card to correct list and set it's parent.
-        cardInstance.transform.SetParent(dvoracScript.dropZoneYard.transform, true);
-        cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
-        cardInstance.GetComponent<CardProperties>().zoomable = true;
-
-        dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
-        dvoracScript.botDeck.RemoveAt(cardIndex);
-
-        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
-
-        // Clear gameplay message.
-        dvoracScript.gameplayMsg.text = "";
-
-        // Call the correct function in regard of what card was played
-        cardFunctionsScript.botCardFunctionalities[dvoracScript.yardDeck[dvoracScript.yardDeck.Count - 1].GetComponent<CardProperties>().name].Invoke();
-    }
-
-    public IEnumerator BotDiscard(float wait, float animationDuration, string deck)
-    {
-        if (deck == "yard")
-        {
-            dvoracScript.gameplayMsg.text = "Bot gleda koju bi kartu odbacio...";
-        }
-        else if (deck == "castle")
-        {
-            dvoracScript.gameplayMsg.text = "Bot gleda koju bi kartu krovao...";
-        }
-        // TODO:
-        // Write algorithm for selecting card to roof discard.
-        int cardIndex = Random.Range(0, dvoracScript.botDeck.Count);
-        GameObject selectedCard = dvoracScript.botDeck[cardIndex];
-
-        yield return new WaitForSeconds(wait);
-
-        if (deck == "yard")
-        {
-            dvoracScript.yardDeck.Add(dvoracScript.botDeck[cardIndex]);
-        }
-        else if (deck == "castle")
-        {
-            dvoracScript.castleDeck.Add(dvoracScript.botDeck[cardIndex]);
-        }
-        dvoracScript.botDeck.RemoveAt(cardIndex);
-
-        GameObject cardInstance = Instantiate(selectedCard, botArea.transform.position, Quaternion.identity);
-        cardInstance.GetComponent<CardProperties>().FlipCardOn("back");
-        cardInstance.GetComponent<CardProperties>().zoomable = false;
-        cardInstance.GetComponent<CardProperties>().draggable = false;
-        cardInstance.transform.SetParent(playScreen.transform, true);
-        cardInstance.transform.localScale = new Vector3(1, 1, 1);
-
-        if (deck == "yard")
-        {
-            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneYard.transform.position, animationDuration));
-        }
-        else if (deck == "castle")
-        {
-            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(cardInstance, botArea.transform.position, dropZoneCastle.transform.position, animationDuration));
-        }
-        dvoracScript.gameplayMsg.text = "";
-
-        yield return new WaitForSeconds(animationDuration);
-
-        if (deck == "yard")
-        {
-            cardInstance.transform.SetParent(dvoracScript.dropZoneYard.transform, true);
-            cardInstance.GetComponent<CardProperties>().FlipCardOn("front");
-            cardInstance.GetComponent<CardProperties>().zoomable = true;
-        }
-        else if (deck == "castle")
-        {
-            cardInstance.transform.SetParent(dvoracScript.dropZoneCastle.transform, true);
-        }
-
-        dvoracScript.botCardCount.text = dvoracScript.botDeck.Count().ToString();
+        return cardIndex;
     }
 }

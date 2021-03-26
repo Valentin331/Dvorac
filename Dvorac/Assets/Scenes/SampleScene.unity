@@ -2158,8 +2158,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 570, y: 481}
-  m_SizeDelta: {x: 61.40869, y: 46.096558}
+  m_AnchoredPosition: {x: 5.1, y: 441.6}
+  m_SizeDelta: {x: 93.68962, y: 68.18358}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &469383732
 MonoBehaviour:
@@ -2174,19 +2174,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0, g: 0.9245283, b: 0.20266245, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 28
-    m_FontStyle: 0
+    m_Font: {fileID: 12800000, guid: f1d55c3c0c4a301428d8c842684445d3, type: 3}
+    m_FontSize: 86
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 2
-    m_MaxSize: 40
+    m_MaxSize: 86
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -4303,6 +4303,7 @@ MonoBehaviour:
   dropZoneYard: {fileID: 2074832803}
   dropZoneCastle: {fileID: 1018641388}
   botInfoPresumedBadCardsInCastle: 0
+  nocnaMoraCounter: 0
   botMessages: []
 --- !u!114 &1014518982
 MonoBehaviour:

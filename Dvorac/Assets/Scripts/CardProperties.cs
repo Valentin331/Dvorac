@@ -444,6 +444,35 @@ public class CardProperties : MonoBehaviour
 
                                 StartCoroutine(botScript.BotTurn(2.6f, .4f));
                             }
+                            else if (dvoracScript.playAction == "discardCP")
+                            {
+                                if (dvoracScript.playerDeck.Count == 0)
+                                {
+                                    gameLoopScript.EndGame("defeat");
+                                    return;
+                                }
+
+                                zoomable = false;
+                                FlipCardOn("back");
+
+                                int nocnaMoraCounter = 0;
+                                foreach (GameObject card2 in dvoracScript.yardDeck)
+                                {
+                                    if (card2.name == "nocnaMora") nocnaMoraCounter += 1;
+                                }
+
+                                dvoracScript.gameplayMsg.text = "Krovaj sljedecu kartu.";
+                                if (dvoracScript.playerDeck.Count > 12 && nocnaMoraCounter != 2) dvoracScript.playAction = "discardCP";
+                                else if (dvoracScript.playerDeck.Count > 6 && nocnaMoraCounter == 2) dvoracScript.playAction = "discardCP";
+                                else
+                                {
+                                    dvoracScript.playAction = "play";
+                                    dvoracScript.playerTurn = false;
+
+                                    dvoracScript.PlayNext("yard");
+                                    StartCoroutine(botScript.BotTurn(2.6f, .4f));
+                                }
+                            }
                         }
                         draggable = false;
                         break;

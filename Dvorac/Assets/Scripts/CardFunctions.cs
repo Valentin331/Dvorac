@@ -112,6 +112,7 @@ public class CardFunctions : MonoBehaviour
     {
         audioManagerScript.PlaySound("goruciCovjek");
 
+        if (botScript.botInfoPresumedBadCardsInCastle > 0) botScript.botInfoPresumedBadCardsInCastle -= 1;
         dvoracScript.FetchCard("player");
         // Wait for the duration of FetchCard function
         await new WaitForSeconds(.2f);
@@ -121,8 +122,6 @@ public class CardFunctions : MonoBehaviour
 
     public void ObjeseniCovjekPlayer()
     {
-        // TODO:
-        // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("objeseniCovjek");
 
         // If player has no cards left; end game
@@ -139,9 +138,10 @@ public class CardFunctions : MonoBehaviour
 
     public async void ZlatnaKulaPlayer()
     {
-        // TODO:
-        // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("zlatnaKula");
+
+        if (botScript.botInfoPresumedBadCardsInCastle > 3) botScript.botInfoPresumedBadCardsInCastle -= 4;
+        else botScript.botInfoPresumedBadCardsInCastle = 0;
 
         for (int i = 0; i < 2; i++)
         {
@@ -156,9 +156,6 @@ public class CardFunctions : MonoBehaviour
 
     public void SrebrnaKulaPlayer()
     {
-        // TODO:
-        // Write code that will be executed when player plays this card
-
         botScript.botInfoPresumedBadCardsInCastle += 4;
 
         audioManagerScript.PlaySound("srebrnaKula");
@@ -177,12 +174,11 @@ public class CardFunctions : MonoBehaviour
 
     public async void VitezPlayer()
     {
-        // TODO:
-        // Set revealed cards to bot memory depending on difficulty level
         audioManagerScript.PlaySound("vitez");
 
         for (int i = 0; i < 2; i++)
         {
+            if (botScript.botInfoPresumedBadCardsInCastle > 0) botScript.botInfoPresumedBadCardsInCastle -= 1;
             dvoracScript.FetchCard("player");
             // Wait for the duration of FetchCard function
             await new WaitForSeconds(.2f);
@@ -212,8 +208,6 @@ public class CardFunctions : MonoBehaviour
 
     public void DvorskaLudaPlayer()
     {
-        // TODO:
-        // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("dvorskaLuda");
 
         // If player has no cards left; end game
@@ -230,11 +224,23 @@ public class CardFunctions : MonoBehaviour
 
     public async void SvetacPlayer()
     {
-        // TODO:
-        // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("svetac");
 
-        if (dvoracScript.playerDeck.Count < 12)
+        int nocnaMoraCounter = 0;
+        foreach (GameObject card2 in dvoracScript.yardDeck)
+        {
+            if (card2.name == "nocnaMora") nocnaMoraCounter += 1;
+        }
+
+        if (dvoracScript.playerDeck.Count < 12 && nocnaMoraCounter != 2)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                dvoracScript.FetchCard("player");
+                await new WaitForSeconds(.2f);
+            }
+        }
+        else if (dvoracScript.playerDeck.Count < 6 && nocnaMoraCounter == 2)
         {
             for (int i = 0; i < 2; i++)
             {
@@ -248,11 +254,25 @@ public class CardFunctions : MonoBehaviour
 
     public void CarobnjakPlayer()
     {
-        // TODO:
-        // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("carobnjak");
 
-        EndOfTurn("player");
+        // If player has no cards left; end game
+        if (dvoracScript.playerDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("defeat");
+            return;
+        }
+
+        if (dvoracScript.playerDeck.Count > 12)
+        {
+            dvoracScript.PlayNext("castle");
+            dvoracScript.gameplayMsg.text = "Krovaj kartu.";
+            dvoracScript.playAction = "discardCP";
+        }
+        else
+        {
+            EndOfTurn("player");
+        }
     }
 
     public void KraljicaPlayer()
@@ -293,11 +313,9 @@ public class CardFunctions : MonoBehaviour
 
     public async void VodorigaPlayer()
     {
-        // TODO:
-        // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("vodoriga");
 
-        dvoracScript.MlineCard();
+        dvoracScript.MillCard();
 
         await new WaitForSeconds(.4f);
 
@@ -306,11 +324,9 @@ public class CardFunctions : MonoBehaviour
 
     public async void PatuljakPlayer()
     {
-        // TODO:
-        // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("patuljak");
 
-        if (dvoracScript.playerDeck.Count() < dvoracScript.botDeck.Count)
+        if (dvoracScript.playerDeck.Count < dvoracScript.botDeck.Count)
         {
             StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
 
@@ -345,11 +361,24 @@ public class CardFunctions : MonoBehaviour
         }
     }
 
-    public void KoloSrecePlayer()
+    public async void KoloSrecePlayer()
     {
-        // TODO:
-        // Write code that will be executed when player plays this card
         audioManagerScript.PlaySound("koloSrece");
+        
+        // If player has no cards left; end game
+        if (dvoracScript.playerDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("defeat");
+            return;
+        }
+
+        foreach (GameObject card in dvoracScript.playerDeck)
+        {
+            dvoracScript.castleDeck.Add(card);
+        }
+
+        StartCoroutine(dvoracScript.KoloSrecePlayerDeal());
+        await new WaitForSeconds(.4f);
 
         EndOfTurn("player");
     }
@@ -472,6 +501,7 @@ public class CardFunctions : MonoBehaviour
     {
         audioManagerScript.PlaySound("goruciCovjek");
 
+        if (botScript.botInfoPresumedBadCardsInCastle > 0) botScript.botInfoPresumedBadCardsInCastle -= 1;
         dvoracScript.FetchCard("bot");
         // Wait for the duration of FetchCard function
         await new WaitForSeconds(.2f);
@@ -481,8 +511,6 @@ public class CardFunctions : MonoBehaviour
 
     public async void ObjeseniCovjekBot()
     {
-        // TODO:
-        // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("objeseniCovjek");
 
         // If bot has no cards left; end game
@@ -505,6 +533,9 @@ public class CardFunctions : MonoBehaviour
         // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("zlatnaKula");
 
+        if (botScript.botInfoPresumedBadCardsInCastle > 3) botScript.botInfoPresumedBadCardsInCastle -= 4;
+        else botScript.botInfoPresumedBadCardsInCastle = 0;
+
         for (int i = 0; i < 2; i++)
         {
             dvoracScript.FetchCard("bot");
@@ -518,9 +549,6 @@ public class CardFunctions : MonoBehaviour
 
     public async void SrebrnaKulaBot()
     {
-        // TODO:
-        // Write code that will be executed when bot plays this card
-
         botScript.botInfoPresumedBadCardsInCastle += 4;
 
         audioManagerScript.PlaySound("srebrnaKula");
@@ -555,6 +583,7 @@ public class CardFunctions : MonoBehaviour
 
         for (int i = 0; i < 2; i++)
         {
+            if (botScript.botInfoPresumedBadCardsInCastle > 0) botScript.botInfoPresumedBadCardsInCastle -= 1;
             dvoracScript.FetchCard("bot");
             // Wait for the duration of FetchCard function
             await new WaitForSeconds(.2f);
@@ -588,8 +617,6 @@ public class CardFunctions : MonoBehaviour
 
     public async void DvorskaLudaBot()
     {
-        // TODO:
-        // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("dvorskaLuda");
 
         // If bot has no cards left; end game
@@ -628,14 +655,22 @@ public class CardFunctions : MonoBehaviour
 
     public async void SvetacBot()
     {
-        // TODO:
-        // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("svetac");
 
-        if (dvoracScript.botDeck.Count < 12)
+        if (dvoracScript.botDeck.Count < 12 && botScript.nocnaMoraCounter != 2)
         {
             for (int i = 0; i < 2; i++)
             {
+                if (botScript.botInfoPresumedBadCardsInCastle > 0) botScript.botInfoPresumedBadCardsInCastle -= 1;
+                dvoracScript.FetchCard("bot");
+                await new WaitForSeconds(.2f);
+            }
+        }
+        else if (dvoracScript.botDeck.Count < 6 && botScript.nocnaMoraCounter == 2)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                if (botScript.botInfoPresumedBadCardsInCastle > 0) botScript.botInfoPresumedBadCardsInCastle -= 1;
                 dvoracScript.FetchCard("bot");
                 await new WaitForSeconds(.2f);
             }
@@ -646,9 +681,14 @@ public class CardFunctions : MonoBehaviour
 
     public void CarobnjakBot()
     {
-        // TODO:
-        // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("carobnjak");
+
+        // If bot has no cards left; end game
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
 
         EndOfTurn("bot");
     }
@@ -691,11 +731,9 @@ public class CardFunctions : MonoBehaviour
 
     public async void VodorigaBot()
     {
-        // TODO:
-        // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("vodoriga");
 
-        dvoracScript.MlineCard();
+        dvoracScript.MillCard();
 
         await new WaitForSeconds(.4f);
 
@@ -704,18 +742,16 @@ public class CardFunctions : MonoBehaviour
 
     public async void PatuljakBot()
     {
-        // TODO:
-        // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("patuljak");
 
-        if(dvoracScript.playerDeck.Count() < dvoracScript.botDeck.Count)
+        if (dvoracScript.botDeck.Count == 0)
         {
-            if (dvoracScript.botDeck.Count == 0)
-            {
-                gameLoopScript.EndGame("victory");
-                return;
-            }
+            gameLoopScript.EndGame("victory");
+            return;
+        }
 
+        if (dvoracScript.playerDeck.Count < dvoracScript.botDeck.Count)
+        {
             StartCoroutine(botScript.BotDiscard(1.1f, .4f, "yard"));
 
             await new WaitForSeconds(1.5f);
@@ -746,11 +782,23 @@ public class CardFunctions : MonoBehaviour
         }
     }
 
-    public void KoloSreceBot()
+    public async void KoloSreceBot()
     {
-        // TODO:
-        // Write code that will be executed when bot plays this card
         audioManagerScript.PlaySound("koloSrece");
+        // If player has no cards left; end game
+        if (dvoracScript.botDeck.Count == 0)
+        {
+            gameLoopScript.EndGame("victory");
+            return;
+        }
+
+        foreach (GameObject card in dvoracScript.botDeck)
+        {
+            dvoracScript.castleDeck.Add(card);
+        }
+
+        StartCoroutine(dvoracScript.KoloSreceBotDeal());
+        await new WaitForSeconds(.4f);
 
         EndOfTurn("bot");
     }

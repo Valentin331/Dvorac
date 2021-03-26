@@ -107,6 +107,70 @@ public class Dvorac : MonoBehaviour
         playerTurn = true;
     }
 
+    public IEnumerator KoloSrecePlayerDeal()
+    {
+        playerTurn = false;
+        int tempPlayerDeckCount = playerDeck.Count;
+        playerDeck.Clear();
+        Shuffle(castleDeck);
+
+        foreach (Transform child in playerArea.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        GameObject castleCardInstance = Instantiate(castleDeck[0], new Vector2(0, 0), Quaternion.identity);
+        castleCardInstance.GetComponent<CardProperties>().zoomable = false;
+        castleCardInstance.GetComponent<CardProperties>().zoomable = false;
+        castleCardInstance.GetComponent<CardProperties>().FlipCardOn("back");
+        castleCardInstance.transform.SetParent(dropZoneCastle.transform, false);
+
+        // Deal cards to players
+        for (int i = 0; i < tempPlayerDeckCount; i++)
+        {
+            GameObject playerCardInstance = Instantiate(castleDeck.Last<GameObject>(), dropZoneCastle.transform.position, Quaternion.identity);
+            playerCardInstance.transform.SetParent(playScreen.transform, true);
+            playerCardInstance.transform.localScale = new Vector3(1, 1, 1);
+            playerCardInstance.GetComponent<CardProperties>().FlipCardOn("front");
+            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(playerCardInstance, dropZoneCastle.transform.position, playerArea.transform.position, 0.1f));
+            yield return new WaitForSeconds(0.1f);
+            playerCardInstance.transform.SetParent(playerArea.transform, false);
+            playerCardInstance.GetComponent<CardProperties>().zoomable = true;
+            playerCardInstance.GetComponent<CardProperties>().draggable = true;
+            playerDeck.Add(castleDeck.Last<GameObject>());
+            castleDeck.RemoveAt(castleDeck.Count - 1);
+        }
+    }
+
+    public IEnumerator KoloSreceBotDeal()
+    {
+        playerTurn = false;
+        int tempBotDeckCount = botDeck.Count;
+        botDeck.Clear();
+        Shuffle(castleDeck);
+
+        GameObject castleCardInstance = Instantiate(castleDeck[0], new Vector2(0, 0), Quaternion.identity);
+        castleCardInstance.GetComponent<CardProperties>().zoomable = false;
+        castleCardInstance.GetComponent<CardProperties>().zoomable = false;
+        castleCardInstance.GetComponent<CardProperties>().FlipCardOn("back");
+        castleCardInstance.transform.SetParent(dropZoneCastle.transform, false);
+
+        // Deal cards to players
+        for (int i = 0; i < tempBotDeckCount; i++)
+        {
+            GameObject botCardInstance = Instantiate(castleDeck.Last<GameObject>(), dropZoneCastle.transform.position, Quaternion.identity);
+            botCardInstance.transform.SetParent(playScreen.transform, true);
+            botCardInstance.transform.localScale = new Vector3(1, 1, 1);
+            botCardInstance.GetComponent<CardProperties>().FlipCardOn("back");
+            StartCoroutine(cardMoveAnimatorScript.AnimateCardMove(botCardInstance, dropZoneCastle.transform.position, botArea.transform.position, 0.1f));
+            yield return new WaitForSeconds(0.1f);
+            botCardInstance.transform.SetParent(botArea.transform, false);
+            Destroy(botCardInstance);
+            botDeck.Add(castleDeck.Last<GameObject>());
+            castleDeck.RemoveAt(castleDeck.Count - 1);
+            botCardCount.text = botDeck.Count().ToString();
+        }
+    }
 
     public void ClearBoard()
     {
@@ -262,7 +326,7 @@ public class Dvorac : MonoBehaviour
         cardReveal2.SetActive(false);
     }
 
-    public async void MlineCard()
+    public async void MillCard()
     {
         float duration = .4f;
 
